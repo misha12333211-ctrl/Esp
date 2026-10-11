@@ -5,30 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>CyberVault — Личное аудиохранилище</title>
+  <meta name="theme-color" content="#000000">
+  <title>CyberVault</title>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' blob: data: https://api.github.com;">
 
   <style>
     :root {
       --bg: #000000;
-      --surface: #121216;
-      --surface-card: #181820;
-      --surface-active: #22222e;
-      --border: rgba(255, 255, 255, 0.08);
+      --surface: rgba(18, 18, 24, 0.82);
+      --surface-card: rgba(28, 28, 36, 0.7);
+      --surface-elevated: #16161e;
+      --border: rgba(255, 255, 255, 0.09);
+      --border-highlight: rgba(16, 185, 129, 0.35);
       --accent: #10b981;
-      --accent-glow: rgba(16, 185, 129, 0.2);
-      --danger: #ef4444;
-      --text: #f3f4f6;
-      --text-sub: #9ca3af;
-      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      --accent-glow: rgba(16, 185, 129, 0.28);
+      --danger: #ff453a;
+      --text: #ffffff;
+      --text-sub: #8e8e93;
+      --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: var(--font);
+      font-family: var(--font-display);
       -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
     }
 
     body {
@@ -37,309 +40,486 @@
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      padding-top: max(12px, env(safe-area-inset-top));
-      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      padding-top: max(16px, env(safe-area-inset-top));
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
       padding-left: max(16px, env(safe-area-inset-left));
       padding-right: max(16px, env(safe-area-inset-right));
       overflow-x: hidden;
       user-select: none;
     }
 
-    .app-container {
+    .app-viewport {
       width: 100%;
-      max-width: 620px;
+      max-width: 580px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       flex: 1;
     }
 
-    /* Навбар */
+    /* ВЕРХНЯЯ ПАНЕЛЬ В СТИЛЕ IOS NAVIGATION BAR */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.8rem 0;
-      margin-bottom: 1rem;
+      padding: 0.6rem 0.2rem 1.2rem 0.2rem;
     }
 
-    .brand {
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .brand-icon-wrapper {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.05));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
+    }
+
+    .brand-icon {
+      width: 18px;
+      height: 18px;
+      fill: var(--accent);
+    }
+
+    .brand-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .nav-actions {
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
-    .brand-icon {
-      width: 24px;
-      height: 24px;
-      fill: var(--accent);
-    }
-
-    .brand-name {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .header-btns {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .chip-btn {
-      background: var(--surface);
-      color: var(--text-sub);
+    .ios-chip {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      color: #e5e5ea;
       border: 1px solid var(--border);
-      padding: 0.45rem 0.85rem;
+      padding: 0.42rem 0.85rem;
       border-radius: 999px;
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    .chip-btn:active {
-      transform: scale(0.96);
-      background: var(--surface-active);
+    .ios-chip:active {
+      transform: scale(0.94);
+      background: rgba(255, 255, 255, 0.16);
     }
 
-    .chip-admin {
+    .ios-chip-admin {
       background: rgba(16, 185, 129, 0.15);
       border-color: rgba(16, 185, 129, 0.4);
       color: var(--accent);
     }
 
-    /* Карточки */
-    .card {
+    /* КАРТОЧКИ С ЭФФЕКТОМ МАТОВОГО СТЕКЛА */
+    .glass-card {
       background: var(--surface);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 1.4rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      margin-bottom: 1rem;
+      border-radius: 24px;
+      padding: 1.6rem;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+      margin-bottom: 1.2rem;
     }
 
-    .card h2 {
-      font-size: 1.25rem;
+    .glass-card h2 {
+      font-size: 1.35rem;
       font-weight: 700;
-      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.1rem;
     }
 
-    /* Формы (16px шрифт для исключения зума в Safari) */
-    .field {
+    /* ПОЛЯ ВВОДА (16px для Safari, чтобы не было зума) */
+    .field-group {
       margin-bottom: 1.1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.4rem;
     }
 
     label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--text-sub);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
+      padding-left: 0.2rem;
     }
 
     input[type="text"],
     input[type="password"],
     input[type="file"] {
       width: 100%;
-      background: #09090d;
+      background: rgba(10, 10, 14, 0.8);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 0.9rem 1rem;
-      border-radius: 12px;
+      padding: 0.95rem 1.1rem;
+      border-radius: 16px;
       font-size: 16px;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
       user-select: text;
     }
 
     input:focus {
       border-color: var(--accent);
+      background: rgba(14, 14, 20, 0.95);
+      box-shadow: 0 0 0 4px var(--accent-glow);
     }
 
-    .btn {
+    /* КНОПКИ */
+    .btn-action {
       width: 100%;
       background: var(--accent);
       color: #000;
       border: none;
-      padding: 0.95rem;
-      border-radius: 14px;
+      padding: 1rem;
+      border-radius: 16px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.98rem;
+      letter-spacing: -0.01em;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      transition: transform 0.1s, opacity 0.2s;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+      transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s;
     }
 
-    .btn:active {
-      transform: scale(0.98);
-      opacity: 0.9;
+    .btn-action:active {
+      transform: scale(0.96);
+      opacity: 0.88;
     }
 
-    .btn:disabled {
-      opacity: 0.5;
+    .btn-action:disabled {
+      opacity: 0.45;
       cursor: not-allowed;
       transform: none;
+      box-shadow: none;
     }
 
-    .btn-secondary {
-      background: var(--surface-card);
+    .btn-subtle {
+      background: rgba(255, 255, 255, 0.07);
       color: var(--text);
       border: 1px solid var(--border);
+      box-shadow: none;
     }
 
-    .btn-secondary:active {
-      background: var(--surface-active);
+    .btn-subtle:active {
+      background: rgba(255, 255, 255, 0.12);
     }
 
-    .status-alert {
-      padding: 0.85rem 1rem;
-      border-radius: 12px;
+    /* СИСТЕМНЫЕ ОПОВЕЩЕНИЯ */
+    .status-banner {
+      padding: 0.9rem 1.1rem;
+      border-radius: 14px;
       font-size: 0.85rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.1rem;
       display: none;
-      line-height: 1.4;
+      line-height: 1.45;
       word-break: break-word;
     }
 
-    .status-alert.error {
+    .status-banner.error {
       display: block;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fca5a5;
+      background: rgba(255, 69, 58, 0.15);
+      border: 1px solid rgba(255, 69, 58, 0.35);
+      color: #ff9f97;
     }
 
-    .status-alert.success {
+    .status-banner.success {
       display: block;
       background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #86efac;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #a7f3d0;
     }
 
-    /* СПИСОК ТРЕКОВ ДЛЯ СЛУШАТЕЛЯ */
-    .tracks-header {
+    /* СПИСОК ЗАПИСЕЙ СЛУШАТЕЛЯ */
+    .playlist-meta {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.8rem;
-      padding: 0 0.2rem;
+      align-items: baseline;
+      padding: 0 0.4rem;
+      margin-bottom: 0.9rem;
     }
 
-    .tracks-title {
-      font-size: 1rem;
+    .playlist-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .playlist-count {
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-sub);
     }
 
-    .track-list {
+    .track-feed {
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
-      margin-bottom: 6rem; /* Запас под мини-плеер */
+      gap: 0.65rem;
+      margin-bottom: 8.5rem; /* Отступ под кастомный плеер */
     }
 
     .track-row {
-      background: var(--surface);
+      background: var(--surface-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      padding: 0.9rem 1.05rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 0.8rem;
+      gap: 0.9rem;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .track-row:active {
-      background: var(--surface-active);
-      transform: scale(0.985);
+      transform: scale(0.975);
+      background: rgba(45, 45, 58, 0.8);
     }
 
-    .track-row.playing {
-      border-color: var(--accent);
+    .track-row.is-active {
+      border-color: var(--border-highlight);
       background: rgba(16, 185, 129, 0.08);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
     }
 
-    .track-icon {
-      width: 44px;
-      height: 44px;
-      min-width: 44px;
-      border-radius: 12px;
-      background: var(--surface-card);
+    .track-artwork {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #1c1c24, #121217);
+      border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--accent);
+      position: relative;
+      overflow: hidden;
     }
 
-    .track-row.playing .track-icon {
-      background: var(--accent);
+    .track-row.is-active .track-artwork {
+      background: linear-gradient(135deg, var(--accent), #059669);
       color: #000;
+      border-color: transparent;
     }
 
-    .track-meta {
+    .track-details {
       flex: 1;
       min-width: 0;
     }
 
     .track-name {
-      font-size: 0.95rem;
+      font-size: 0.98rem;
       font-weight: 600;
+      letter-spacing: -0.01em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .track-info {
-      font-size: 0.75rem;
+    .track-row.is-active .track-name {
+      color: var(--accent);
+    }
+
+    .track-subtext {
+      font-size: 0.76rem;
       color: var(--text-sub);
       margin-top: 0.2rem;
     }
 
-    /* ПЛЕЕР В СТИЛЕ IOS (FLOATING DOCK) */
-    .ios-dock {
+    /* АНИМИРОВАННЫЙ ЭКВАЛАЙЗЕР В КАРТОЧКЕ */
+    .mini-equalizer {
+      display: none;
+      align-items: flex-end;
+      gap: 2.5px;
+      height: 16px;
+      padding-right: 0.3rem;
+    }
+
+    .track-row.is-playing .mini-equalizer {
+      display: flex;
+    }
+
+    .eq-bar {
+      width: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      animation: eqBounce 1s ease-in-out infinite alternate;
+    }
+
+    .eq-bar:nth-child(1) { height: 14px; animation-delay: 0.1s; }
+    .eq-bar:nth-child(2) { height: 8px; animation-delay: 0.35s; }
+    .eq-bar:nth-child(3) { height: 16px; animation-delay: 0.2s; }
+
+    @keyframes eqBounce {
+      0% { height: 4px; }
+      100% { height: 16px; }
+    }
+
+    /* ========================================= */
+    /* КАСТОМНЫЙ ПРЕМИАЛЬНЫЙ ПЛЕЕР (IOS DOCK)    */
+    /* ========================================= */
+    .custom-player-dock {
       position: fixed;
       left: 1rem;
       right: 1rem;
       bottom: max(16px, env(safe-area-inset-bottom));
-      max-width: 620px;
+      max-width: 580px;
       margin: 0 auto;
-      background: rgba(22, 22, 28, 0.92);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 0.85rem 1.1rem;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
-      z-index: 100;
+      background: rgba(18, 18, 24, 0.92);
+      backdrop-filter: blur(35px) saturate(180%);
+      -webkit-backdrop-filter: blur(35px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 26px;
+      padding: 0.95rem 1.25rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      animation: dockSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes dockSlideUp {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .dock-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+    }
+
+    .dock-track-info {
+      flex: 1;
+      min-width: 0;
     }
 
     .dock-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--accent);
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-bottom: 0.5rem;
     }
 
-    audio {
+    .dock-status {
+      font-size: 0.72rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 0.15rem;
+    }
+
+    /* СКРАББЕР (ПОЛОСА ПРОГРЕССА) */
+    .scrubber-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .scrubber-slider {
+      -webkit-appearance: none;
+      appearance: none;
       width: 100%;
-      height: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.15);
       outline: none;
+      transition: height 0.15s;
+      cursor: pointer;
     }
 
-    /* ВКЛАДКИ АДМИНКИ */
-    .admin-nav {
+    .scrubber-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .scrubber-slider:active::-webkit-slider-thumb {
+      transform: scale(1.4);
+    }
+
+    .time-stamps {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-sub);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* КНОПКИ УПРАВЛЕНИЯ ПЛЕЕРОМ */
+    .player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.4rem;
+      padding-top: 0.2rem;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      color: #e5e5ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .ctrl-btn:active {
+      transform: scale(0.85);
+      color: var(--accent);
+    }
+
+    .ctrl-btn-play {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 6px 18px rgba(255, 255, 255, 0.25);
+    }
+
+    .ctrl-btn-play:active {
+      transform: scale(0.9);
+      background: var(--accent);
+    }
+
+    /* АДМИН ПАНЕЛЬ */
+    .admin-tab-bar {
       display: flex;
       gap: 0.35rem;
       border-bottom: 1px solid var(--border);
@@ -352,17 +532,17 @@
       background: none;
       border: none;
       color: var(--text-sub);
-      padding: 0.45rem 0.75rem;
+      padding: 0.45rem 0.8rem;
       font-size: 0.85rem;
       font-weight: 600;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       white-space: nowrap;
     }
 
     .admin-tab-btn.active {
       color: var(--accent);
-      background: rgba(16, 185, 129, 0.12);
+      background: rgba(16, 185, 129, 0.14);
     }
 
     .hidden {
@@ -372,157 +552,197 @@
 </head>
 <body>
 
-<div class="app-container">
-  <!-- ШАПКА -->
+<div class="app-viewport">
+  <!-- ВЕРХНЯЯ НАВИГАЦИОННАЯ ПАНЕЛЬ -->
   <header>
-    <div class="brand">
-      <svg class="brand-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>
-      <div class="brand-name">CyberVault</div>
+    <div class="brand-group">
+      <div class="brand-icon-wrapper">
+        <svg class="brand-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>
+      </div>
+      <div class="brand-text">CyberVault</div>
     </div>
-    <div class="header-btns" id="headerButtons"></div>
+    <div class="nav-actions" id="navActions"></div>
   </header>
 
-  <!-- 1. ЭКРАН ВХОДА -->
-  <section class="card" id="loginScreen">
-    <h2>Вход в аудиосистему</h2>
-    <div class="status-alert" id="loginAlert"></div>
+  <!-- 1. ЭКРАН АВТОРИЗАЦИИ -->
+  <section class="glass-card" id="loginScreen">
+    <h2>Вход в Vault</h2>
+    <div class="status-banner" id="loginBanner"></div>
     <form onsubmit="handleLogin(event)">
-      <div class="field">
-        <label>Имя пользователя</label>
-        <input type="text" id="loginUser" placeholder="Ваш логин" required autocomplete="username" autocapitalize="none">
+      <div class="field-group">
+        <label>Логин слушателя</label>
+        <input type="text" id="loginUser" placeholder="Введите логин" required autocomplete="username" autocapitalize="none">
       </div>
-      <div class="field">
+      <div class="field-group">
         <label>Пароль доступа</label>
-        <input type="password" id="loginPass" placeholder="Пароль" required autocomplete="current-password">
+        <input type="password" id="loginPass" placeholder="Секретный пароль" required autocomplete="current-password">
       </div>
-      <button type="submit" class="btn" id="loginSubmitBtn">Открыть каталог</button>
+      <button type="submit" class="btn-action" id="loginSubmitBtn">Открыть аудиотеку</button>
     </form>
   </section>
 
-  <!-- 2. ИЗОЛИРОВАННЫЙ ЭКРАН СЛУШАТЕЛЯ (ЧИСТЫЙ МЕДИАПЛЕЕР) -->
+  <!-- 2. ЭКРАН СЛУШАТЕЛЯ (ЧИСТЫЙ ПЛЕЕР БЕЗ СЛЕДОВ АДМИНКИ) -->
   <section class="hidden" id="listenerScreen">
-    <div class="status-alert" id="listenerAlert"></div>
-    <div class="tracks-header">
-      <span class="tracks-title">Ваша защищенная медиатека</span>
-      <span style="font-size: 0.8rem; color: var(--text-sub);" id="trackCountLabel">0 треков</span>
+    <div class="status-banner" id="listenerBanner"></div>
+    <div class="playlist-meta">
+      <div class="playlist-title">Аудиозаписи</div>
+      <div class="playlist-count" id="trackCountLabel">0 треков</div>
     </div>
 
-    <div class="track-list" id="trackListContainer"></div>
+    <div class="track-feed" id="trackFeedContainer"></div>
 
-    <!-- ДОК-ПЛЕЕР -->
-    <div class="ios-dock hidden" id="iosPlayerDock">
-      <div class="dock-title" id="nowPlayingText">Выберите аудиозапись</div>
-      <audio id="audioEl" controls playsinline preload="auto"></audio>
+    <!-- КАСТОМНЫЙ ПАРЯЩИЙ АУДИОПЛЕЕР IOS -->
+    <div class="custom-player-dock hidden" id="customPlayerDock">
+      <div class="dock-top-row">
+        <div class="dock-track-info">
+          <div class="dock-title" id="dockTrackTitle">Загрузка...</div>
+          <div class="dock-status" id="dockStatus">Расшифровано в RAM (AES-256)</div>
+        </div>
+      </div>
+
+      <!-- СКРАББЕР / ТАЙМЛАЙН -->
+      <div class="scrubber-container">
+        <input type="range" class="scrubber-slider" id="audioScrubber" min="0" max="100" value="0" oninput="onScrub(this.value)">
+        <div class="time-stamps">
+          <span id="timeCurrent">0:00</span>
+          <span id="timeDuration">0:00</span>
+        </div>
+      </div>
+
+      <!-- КНОПКИ УПРАВЛЕНИЯ -->
+      <div class="player-controls">
+        <!-- Назад 15 сек -->
+        <button class="ctrl-btn" onclick="seekRelative(-15)" title="Назад 15 сек">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
+        </button>
+
+        <!-- Главная кнопка Play / Pause -->
+        <button class="ctrl-btn ctrl-btn-play" id="mainPlayBtn" onclick="togglePlayPause()">
+          <svg id="playIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg id="pauseIcon" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+
+        <!-- Вперед 15 сек -->
+        <button class="ctrl-btn" onclick="seekRelative(15)" title="Вперед 15 сек">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg>
+        </button>
+      </div>
     </div>
   </section>
 
   <!-- 3. ПАНЕЛЬ АДМИНИСТРАТОРА (ДОСТУПНА ТОЛЬКО РОЛИ ADMIN) -->
-  <section class="card hidden" id="adminScreen">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-      <h2>Управление Хранилищем</h2>
-      <button class="chip-btn" onclick="openView('listener')">← К плееру</button>
+  <section class="glass-card hidden" id="adminScreen">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+      <h2>Панель Управления</h2>
+      <button class="ios-chip" onclick="navigateTo('listener')">← К плееру</button>
     </div>
 
-    <div class="admin-nav">
-      <button class="admin-tab-btn active" id="tabUploadBtn" onclick="switchAdminTab('upload')">Загрузка MP3</button>
+    <div class="admin-tab-bar">
+      <button class="admin-tab-btn active" id="tabUploadBtn" onclick="switchAdminTab('upload')">Загрузить MP3</button>
       <button class="admin-tab-btn" id="tabUsersBtn" onclick="switchAdminTab('users')">Пользователи</button>
-      <button class="admin-tab-btn" id="tabDiagBtn" onclick="switchAdminTab('diag')">Диагностика 404</button>
+      <button class="admin-tab-btn" id="tabDiagBtn" onclick="switchAdminTab('diag')">Диагностика</button>
       <button class="admin-tab-btn" id="tabSyncBtn" onclick="switchAdminTab('sync')">GitHub</button>
     </div>
 
-    <div class="status-alert" id="adminAlert"></div>
+    <div class="status-banner" id="adminBanner"></div>
 
-    <!-- Вкладка: Загрузить трек -->
+    <!-- Вкладка: Загрузка треков -->
     <div id="tabUploadContent">
       <form onsubmit="handleUploadTrack(event)">
-        <div class="field">
-          <label>Название записи</label>
-          <input type="text" id="trackTitleInput" placeholder="Например: Аудиозапись 1" required>
+        <div class="field-group">
+          <label>Название аудиозаписи</label>
+          <input type="text" id="trackTitleInput" placeholder="Например: Аудиозапись #1" required>
         </div>
-        <div class="field">
+        <div class="field-group">
           <label>MP3 Аудиофайл</label>
           <input type="file" id="trackFileInput" accept="audio/mp3,audio/*" required>
         </div>
-        <button type="submit" class="btn" id="uploadTrackBtn">Зашифровать AES-256 и сохранить</button>
+        <button type="submit" class="btn-action" id="uploadTrackBtn">Зашифровать AES-256 и упаковать</button>
       </form>
     </div>
 
-    <!-- Вкладка: Управление пользователями -->
+    <!-- Вкладка: Пользователи -->
     <div id="tabUsersContent" class="hidden">
-      <form onsubmit="handleAddUser(event)" style="background: #09090d; padding: 1rem; border-radius: 14px; margin-bottom: 1rem;">
-        <div class="field">
-          <label>Логин нового слушателя</label>
+      <form onsubmit="handleAddUser(event)" style="background: rgba(10, 10, 14, 0.7); padding: 1.2rem; border-radius: 18px; margin-bottom: 1.2rem;">
+        <div class="field-group">
+          <label>Новый слушатель (логин)</label>
           <input type="text" id="newUserName" placeholder="Логин" required autocapitalize="none">
         </div>
-        <div class="field">
-          <label>Пароль</label>
+        <div class="field-group">
+          <label>Пароль доступа</label>
           <input type="password" id="newUserPass" placeholder="Пароль" required>
         </div>
-        <button type="submit" class="btn">Выдать доступ</button>
+        <button type="submit" class="btn-action">Добавить слушателя</button>
       </form>
-      <div id="userListRows" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+      <div id="userRowsContainer" style="display: flex; flex-direction: column; gap: 0.6rem;"></div>
     </div>
 
-    <!-- Вкладка: Диагностика файлов (проверка 404 ошибок) -->
+    <!-- Вкладка: Диагностика 404 -->
     <div id="tabDiagContent" class="hidden">
-      <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 0.8rem;">
-        Проверка доступности всех зашифрованных файлов по их реальным ссылкам в репозитории:
+      <p style="font-size: 0.82rem; color: var(--text-sub); margin-bottom: 1rem; line-height: 1.4;">
+        Проверка доступности всех зашифрованных файлов по их реальным адресам в репозитории:
       </p>
-      <button class="btn btn-secondary" style="margin-bottom: 1rem;" onclick="runDiagnostics()">Запустить сканирование файлов</button>
+      <button class="btn-action btn-subtle" style="margin-bottom: 1rem;" onclick="runDiagnostics()">Запустить тест ссылок</button>
       <div id="diagLogs" style="font-size: 0.8rem; line-height: 1.6; word-break: break-all;"></div>
     </div>
 
-    <!-- Вкладка: Синхронизация с GitHub -->
+    <!-- Вкладка: GitHub Sync -->
     <div id="tabSyncContent" class="hidden">
-      <div class="field">
-        <label>GitHub Personal Access Token (с правами contents:write)</label>
+      <div class="field-group">
+        <label>GitHub Personal Access Token (contents:write)</label>
         <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
       </div>
-      <div class="field">
+      <div class="field-group">
         <label>Репозиторий (Owner/Repo)</label>
         <input type="text" id="ghRepo" value="misha12333211-ctrl/Esp">
       </div>
-      <div class="field">
+      <div class="field-group">
         <label>Ветка</label>
         <input type="text" id="ghBranch" value="main">
       </div>
-      <button class="btn btn-secondary" onclick="exportVaultFile()">Скачать vault.json вручную</button>
+      <button class="btn-action btn-subtle" onclick="exportVaultFile()">Скачать vault.json вручную</button>
     </div>
   </section>
 
-  <!-- 4. ПЕРВИЧНАЯ НАСТРОЙКА (Если хранилище новое) -->
-  <section class="card hidden" id="initScreen">
-    <h2>Создание нового хранилища</h2>
-    <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 1rem;">
-      Файл vault.json не обнаружен. Задайте логин и пароль Администратора для генерации мастер-ключа шифрования.
+  <!-- 4. ПЕРВИЧНАЯ НАСТРОЙКА -->
+  <section class="glass-card hidden" id="initScreen">
+    <h2>Инициализация Vault</h2>
+    <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 1.1rem; line-height: 1.45;">
+      Файл vault.json не обнаружен. Задайте логин и пароль Главного Администратора.
     </p>
-    <div class="status-alert" id="initAlert"></div>
+    <div class="status-banner" id="initBanner"></div>
     <form onsubmit="handleInitVault(event)">
-      <div class="field">
+      <div class="field-group">
         <label>Логин Главного Администратора</label>
         <input type="text" id="initAdminUser" value="admin" required autocapitalize="none">
       </div>
-      <div class="field">
+      <div class="field-group">
         <label>Мастер-пароль Администратора</label>
         <input type="password" id="initAdminPass" placeholder="От 8 символов..." required>
       </div>
-      <button type="submit" class="btn">Инициализировать хранилище</button>
+      <button type="submit" class="btn-action">Сгенерировать мастер-ключ</button>
     </form>
   </section>
 </div>
 
+<!-- СКРЫТЫЙ СИСТЕМНЫЙ АУДИОДВИЖОК -->
+<audio id="coreAudio" playsinline preload="auto" class="hidden"></audio>
+
 <script>
-  // СОСТОЯНИЕ В ОПЕРАТИВНОЙ ПАМЯТИ
+  // ОПЕРАТИВНОЕ СОСТОЯНИЕ В RAM
   let state = {
     vaultData: null,
     vaultKey: null,
     currentUser: null,
     tracks: [],
-    currentAudioUrl: null,
-    activeTrackIndex: -1
+    currentBlobUrl: null,
+    activeTrackIndex: -1,
+    isScrubbing: false
   };
 
-  // ВЫЧИСЛЕНИЕ АБСОЛЮТНОГО БАЗОВОГО URL ДЛЯ https://misha12333211-ctrl.github.io/Esp/
+  const coreAudio = document.getElementById('coreAudio');
+
+  // ОПРЕДЕЛЕНИЕ БАЗОВОГО URL GITHUB PAGES ДЛЯ Esp/
   function getBaseRepoUrl() {
     let path = window.location.pathname;
     if (!path.endsWith('/')) {
@@ -536,7 +756,7 @@
     return window.location.origin + path;
   }
 
-  // --- КРИПТОГРАФИЧЕСКИЕ ПРИМИТИВЫ (WEB CRYPTO API) ---
+  // --- КРИПТОГРАФИЧЕСКИЕ ПРИМИТИВЫ (AES-GCM-256 + PBKDF2) ---
   async function sha256(str) {
     const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str.trim().toLowerCase()));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -575,56 +795,55 @@
     );
   }
 
-  // --- СТАРТ ПРИЛОЖЕНИЯ ---
+  // --- ИНИЦИАЛИЗАЦИЯ И СТАРТ ---
   window.addEventListener('DOMContentLoaded', async () => {
+    setupAudioListeners();
     try {
       const vaultUrl = new URL('vault.json', getBaseRepoUrl()).href + `?_cb=${Date.now()}`;
       const res = await fetch(vaultUrl, { cache: 'no-store' });
       if (!res.ok) throw new Error('Vault not found');
       state.vaultData = await res.json();
-      openView('login');
+      navigateTo('login');
     } catch (_) {
-      openView('init');
+      navigateTo('init');
     }
   });
 
-  function openView(view) {
+  function navigateTo(view) {
     document.getElementById('loginScreen').classList.toggle('hidden', view !== 'login');
     document.getElementById('listenerScreen').classList.toggle('hidden', view !== 'listener');
     document.getElementById('adminScreen').classList.toggle('hidden', view !== 'admin');
     document.getElementById('initScreen').classList.toggle('hidden', view !== 'init');
-    updateHeaderUI();
+    updateNavHeader();
   }
 
-  function updateHeaderUI() {
-    const box = document.getElementById('headerButtons');
+  function updateNavHeader() {
+    const box = document.getElementById('navActions');
     box.innerHTML = '';
-
     if (!state.currentUser) return;
 
-    // ТОЛЬКО ЕСЛИ АДМИНИСТРАТОР — показываем кнопку админки
     if (state.currentUser.role === 'admin') {
       const adminBtn = document.createElement('button');
-      adminBtn.className = 'chip-btn chip-admin';
+      adminBtn.className = 'ios-chip ios-chip-admin';
       adminBtn.textContent = '⚙️ Управление';
-      adminBtn.onclick = () => openView('admin');
+      adminBtn.onclick = () => navigateTo('admin');
       box.appendChild(adminBtn);
     }
 
     const logoutBtn = document.createElement('button');
-    logoutBtn.className = 'chip-btn';
+    logoutBtn.className = 'ios-chip';
     logoutBtn.textContent = 'Выйти';
     logoutBtn.onclick = logout;
     box.appendChild(logoutBtn);
   }
 
-  function showAlert(id, msg, type) {
+  function showBanner(id, msg, type) {
     const el = document.getElementById(id);
     el.innerHTML = msg;
-    el.className = `status-alert ${type}`;
+    el.className = `status-banner ${type}`;
   }
 
-  // --- ВХОД ПОЛЬЗОВАТЕЛЯ ---
+  // --- ВХОД И ДЕШИФРОВКА ХРАНИЛИЩА ---
   async function handleLogin(e) {
     e.preventDefault();
     const user = document.getElementById('loginUser').value;
@@ -633,13 +852,12 @@
 
     try {
       btn.disabled = true;
-      showAlert('loginAlert', 'Расшифровка ключей сессии...', 'success');
+      showBanner('loginBanner', 'Расшифровка мастер-ключа в RAM...', 'success');
 
       const uHash = await sha256(user);
       const record = state.vaultData.users[uHash];
       if (!record) throw new Error('Неверный логин или пароль.');
 
-      // Расшифровываем мастер-ключ
       const userKey = await deriveUserKey(pass, new Uint8Array(base64ToBuf(record.salt)));
       const rawVaultKey = await crypto.subtle.decrypt(
         { name: "AES-GCM", iv: new Uint8Array(base64ToBuf(record.iv)) },
@@ -657,7 +875,7 @@
 
       state.currentUser = { username: user, role: record.role, hash: uHash };
 
-      // Расшифровываем список треков
+      // Расшифровываем медиатеку
       const catIv = new Uint8Array(base64ToBuf(state.vaultData.catalog.iv));
       const decCatalog = await crypto.subtle.decrypt(
         { name: "AES-GCM", iv: catIv },
@@ -666,45 +884,53 @@
       );
       state.tracks = JSON.parse(new TextDecoder().decode(decCatalog));
 
-      renderTrackList();
-      openView('listener');
+      renderPlaylistFeed();
+      navigateTo('listener');
     } catch (err) {
-      showAlert('loginAlert', 'Ошибка входа: неверные учетные данные.', 'error');
+      showBanner('loginBanner', 'Ошибка доступа: неверные учетные данные.', 'error');
     } finally {
       btn.disabled = false;
     }
   }
 
-  // --- ПЛЕЕР И ВОСПРОИЗВЕДЕНИЕ ---
-  function renderTrackList() {
-    const container = document.getElementById('trackListContainer');
-    container.innerHTML = '';
+  // --- СПИСОК АУДИОЗАПИСЕЙ ---
+  function renderPlaylistFeed() {
+    const feed = document.getElementById('trackFeedContainer');
+    feed.innerHTML = '';
     document.getElementById('trackCountLabel').textContent = `${state.tracks.length} треков`;
 
     if (state.tracks.length === 0) {
-      container.innerHTML = '<div style="color: var(--text-sub); text-align: center; padding: 2.5rem;">В медиатеке пока нет аудиозаписей.</div>';
+      feed.innerHTML = '<div style="color: var(--text-sub); text-align: center; padding: 3rem 1rem;">Хранилище пусто. Нет загруженных записей.</div>';
       return;
     }
 
     state.tracks.forEach((track, idx) => {
+      const isCurrent = state.activeTrackIndex === idx;
+      const isPlaying = isCurrent && !coreAudio.paused;
+
       const row = document.createElement('div');
-      row.className = `track-row ${state.activeTrackIndex === idx ? 'playing' : ''}`;
-      row.onclick = () => playAudioTrack(idx);
+      row.className = `track-row ${isCurrent ? 'is-active' : ''} ${isPlaying ? 'is-playing' : ''}`;
+      row.onclick = () => selectAndPlayTrack(idx);
 
       row.innerHTML = `
-        <div class="track-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <div class="track-artwork">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
         </div>
-        <div class="track-meta">
+        <div class="track-details">
           <div class="track-name">${escapeHtml(track.title)}</div>
-          <div class="track-info">${track.date || ''} • ${track.size || ''}</div>
+          <div class="track-subtext">${track.date || ''} • ${track.size || ''}</div>
+        </div>
+        <div class="mini-equalizer">
+          <div class="eq-bar"></div>
+          <div class="eq-bar"></div>
+          <div class="eq-bar"></div>
         </div>
       `;
-      container.appendChild(row);
+      feed.appendChild(row);
     });
   }
 
-  // УМНЫЙ ПОИСК ФАЙЛА (tracks/файл.enc И файл.enc в корне)
+  // УМНЫЙ ЗАГРУЗЧИК ФАЙЛОВ (.enc)
   async function downloadBinary(filename) {
     const base = getBaseRepoUrl();
     const urlsToTry = [
@@ -714,42 +940,43 @@
       new URL(encodeURIComponent(filename), base).href
     ];
 
-    let lastStatus = '';
+    let lastError = '';
     for (const rawUrl of [...new Set(urlsToTry)]) {
       const testUrl = rawUrl + `?_cb=${Date.now()}`;
       try {
         const res = await fetch(testUrl, { cache: 'no-store' });
         if (res.ok) {
           const buf = await res.arrayBuffer();
-          if (buf.byteLength < 16) throw new Error('Файл пуст или поврежден');
+          if (buf.byteLength < 16) throw new Error('Файл пуст');
           return buf;
         } else {
-          lastStatus = `HTTP ${res.status} по адресу: ${rawUrl}`;
+          lastError = `HTTP ${res.status} (${rawUrl})`;
         }
       } catch (err) {
-        lastStatus = `${err.message} (${rawUrl})`;
+        lastError = `${err.message} (${rawUrl})`;
       }
     }
-
-    throw new Error(`Файл не найден на GitHub Pages.<br>Последняя ошибка: ${lastStatus}`);
+    throw new Error(`Файл не найден на GitHub Pages.<br>Статус: ${lastError}`);
   }
 
-  async function playAudioTrack(idx) {
+  // --- ВОСПРОИЗВЕДЕНИЕ В КАСТОМНОМ ПЛЕЕРЕ ---
+  async function selectAndPlayTrack(idx) {
     const track = state.tracks[idx];
-    const audio = document.getElementById('audioEl');
-    const dock = document.getElementById('iosPlayerDock');
-    const titleText = document.getElementById('nowPlayingText');
+    const dock = document.getElementById('customPlayerDock');
+    const titleEl = document.getElementById('dockTrackTitle');
+    const statusEl = document.getElementById('dockStatus');
 
     state.activeTrackIndex = idx;
-    renderTrackList();
+    renderPlaylistFeed();
 
-    // 1. КРИТИЧНО ДЛЯ IPHONE SAFARI: разблокировка звука СИНХРОННО при клике!
-    audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-    audio.load();
-    audio.play().catch(() => {});
+    // 1. КРИТИЧНО ДЛЯ SAFARI IOS: синхронный вызов разблокировки при клике пользователя
+    coreAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+    coreAudio.load();
+    coreAudio.play().catch(() => {});
 
     dock.classList.remove('hidden');
-    titleText.textContent = `Загрузка и дешифрование: ${track.title}...`;
+    titleEl.textContent = track.title;
+    statusEl.textContent = 'Загрузка и дешифрование...';
 
     try {
       const buffer = await downloadBinary(track.filename);
@@ -764,15 +991,15 @@
         ciphertext
       );
 
-      if (state.currentAudioUrl) URL.revokeObjectURL(state.currentAudioUrl);
+      if (state.currentBlobUrl) URL.revokeObjectURL(state.currentBlobUrl);
 
-      // КРИТИЧНО ДЛЯ IOS: строго audio/mpeg
+      // КРИТИЧНО ДЛЯ IOS SAFARI: обязательно audio/mpeg
       const blob = new Blob([decrypted], { type: 'audio/mpeg' });
-      state.currentAudioUrl = URL.createObjectURL(blob);
+      state.currentBlobUrl = URL.createObjectURL(blob);
 
-      audio.src = state.currentAudioUrl;
-      titleText.textContent = `▶ ${track.title}`;
-      await audio.play();
+      coreAudio.src = state.currentBlobUrl;
+      statusEl.textContent = 'Безопасный поток из памяти RAM';
+      await coreAudio.play();
 
       // Интеграция с экраном блокировки iPhone (MediaSession API)
       if ('mediaSession' in navigator) {
@@ -781,11 +1008,84 @@
           artist: 'CyberVault',
           album: 'Зашифрованное хранилище'
         });
+        navigator.mediaSession.setActionHandler('play', togglePlayPause);
+        navigator.mediaSession.setActionHandler('pause', togglePlayPause);
+        navigator.mediaSession.setActionHandler('seekbackward', () => seekRelative(-15));
+        navigator.mediaSession.setActionHandler('seekforward', () => seekRelative(15));
       }
     } catch (err) {
-      showAlert('listenerAlert', `Ошибка воспроизведения трека «${escapeHtml(track.title)}»:<br>${err.message}`, 'error');
-      titleText.textContent = `Сбой воспроизведения`;
+      showBanner('listenerBanner', `Ошибка открытия «${escapeHtml(track.title)}»:<br>${err.message}`, 'error');
+      statusEl.textContent = 'Ошибка дешифрования';
     }
+  }
+
+  // --- УПРАВЛЕНИЕ КАСТОМНЫМ ПЛЕЕРОМ ---
+  function togglePlayPause() {
+    if (!coreAudio.src) return;
+    if (coreAudio.paused) {
+      coreAudio.play();
+    } else {
+      coreAudio.pause();
+    }
+  }
+
+  function seekRelative(seconds) {
+    if (!coreAudio.duration) return;
+    coreAudio.currentTime = Math.max(0, Math.min(coreAudio.currentTime + seconds, coreAudio.duration));
+  }
+
+  function onScrub(percent) {
+    if (!coreAudio.duration) return;
+    state.isScrubbing = true;
+    const target = (percent / 100) * coreAudio.duration;
+    coreAudio.currentTime = target;
+    setTimeout(() => { state.isScrubbing = false; }, 100);
+  }
+
+  function formatTime(sec) {
+    if (isNaN(sec) || !isFinite(sec)) return '0:00';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  }
+
+  function setupAudioListeners() {
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const scrubber = document.getElementById('audioScrubber');
+    const timeCurrent = document.getElementById('timeCurrent');
+    const timeDuration = document.getElementById('timeDuration');
+
+    coreAudio.addEventListener('play', () => {
+      playIcon.classList.add('hidden');
+      pauseIcon.classList.remove('hidden');
+      renderPlaylistFeed();
+    });
+
+    coreAudio.addEventListener('pause', () => {
+      playIcon.classList.remove('hidden');
+      pauseIcon.classList.add('hidden');
+      renderPlaylistFeed();
+    });
+
+    coreAudio.addEventListener('timeupdate', () => {
+      if (state.isScrubbing) return;
+      if (coreAudio.duration) {
+        const pct = (coreAudio.currentTime / coreAudio.duration) * 100;
+        scrubber.value = pct;
+        timeCurrent.textContent = formatTime(coreAudio.currentTime);
+        timeDuration.textContent = formatTime(coreAudio.duration);
+      }
+    });
+
+    coreAudio.addEventListener('ended', () => {
+      playIcon.classList.remove('hidden');
+      pauseIcon.classList.add('hidden');
+      // Авто-переход к следующему треку
+      if (state.activeTrackIndex + 1 < state.tracks.length) {
+        selectAndPlayTrack(state.activeTrackIndex + 1);
+      }
+    });
   }
 
   // --- АДМИНИСТРАТИВНЫЕ ФУНКЦИИ ---
@@ -805,7 +1105,7 @@
 
     try {
       btn.disabled = true;
-      showAlert('adminAlert', 'Шифрование аудиофайла AES-256-GCM...', 'success');
+      showBanner('adminBanner', 'Шифрование аудиофайла AES-256-GCM...', 'success');
 
       const fileBuffer = await file.arrayBuffer();
       const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -838,24 +1138,23 @@
       );
       state.vaultData.catalog = { iv: bufToBase64(catIv), data: bufToBase64(encCatalog) };
 
-      // Проверяем GitHub токен для автозагрузки
       const token = document.getElementById('ghToken').value;
       const repo = document.getElementById('ghRepo').value;
       if (token && repo) {
-        showAlert('adminAlert', 'Отправка файлов в репозиторий через GitHub API...', 'success');
-        await githubUpload(repo, `tracks/${filename}`, combined.buffer, `Add audio: ${title}`);
+        showBanner('adminBanner', 'Отправка в GitHub API...', 'success');
+        await githubUpload(repo, `tracks/${filename}`, combined.buffer, `Add: ${title}`);
         await githubUpload(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), 'Update catalog');
-        showAlert('adminAlert', 'Успешно опубликовано в GitHub!', 'success');
+        showBanner('adminBanner', 'Успешно сохранено и отправлено в GitHub!', 'success');
       } else {
         downloadBlob(new Blob([combined]), filename);
         exportVaultFile();
-        showAlert('adminAlert', `Файлы ${filename} и vault.json скачаны. Положите ${filename} в папку tracks/ (или в корень), а vault.json в корень репозитория Esp.`, 'success');
+        showBanner('adminBanner', `Файлы ${filename} и vault.json скачаны. Загрузите ${filename} в папку tracks/ (или в корень), а vault.json в корень репозитория Esp.`, 'success');
       }
 
       document.getElementById('trackTitleInput').value = '';
       document.getElementById('trackFileInput').value = '';
     } catch (err) {
-      showAlert('adminAlert', 'Ошибка: ' + err.message, 'error');
+      showBanner('adminBanner', 'Ошибка: ' + err.message, 'error');
     } finally {
       btn.disabled = false;
     }
@@ -884,27 +1183,27 @@
 
       renderUsersAdmin();
       exportVaultFile();
-      showAlert('adminAlert', `Пользователь ${escapeHtml(user)} создан. Обновленный vault.json скачан — замените его в репозитории на GitHub.`, 'success');
+      showBanner('adminBanner', `Слушатель ${escapeHtml(user)} создан. Обновленный vault.json скачан — замените его на GitHub.`, 'success');
       document.getElementById('newUserName').value = '';
       document.getElementById('newUserPass').value = '';
     } catch (e) {
-      showAlert('adminAlert', 'Ошибка: ' + e.message, 'error');
+      showBanner('adminBanner', 'Ошибка: ' + e.message, 'error');
     }
   }
 
   function renderUsersAdmin() {
-    const box = document.getElementById('userListRows');
+    const box = document.getElementById('userRowsContainer');
     box.innerHTML = '';
     Object.keys(state.vaultData.users).forEach(hash => {
       const u = state.vaultData.users[hash];
       const div = document.createElement('div');
-      div.style.cssText = 'background: #09090d; padding: 0.75rem 1rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;';
+      div.style.cssText = 'background: rgba(10, 10, 14, 0.7); padding: 0.85rem 1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;';
       div.innerHTML = `
         <div>
           <span style="font-family: monospace;">${hash.substring(0, 10)}...</span>
-          <span style="color: var(--accent); margin-left: 0.5rem;">[${u.role}]</span>
+          <span style="color: var(--accent); margin-left: 0.5rem; font-weight: 600;">[${u.role}]</span>
         </div>
-        ${u.role !== 'admin' ? `<button class="chip-btn" style="color: var(--danger);" onclick="deleteUser('${hash}')">Удалить</button>` : '<span style="font-size: 0.75rem; color: var(--text-sub);">Создатель</span>'}
+        ${u.role !== 'admin' ? `<button class="ios-chip" style="color: var(--danger);" onclick="deleteUser('${hash}')">Удалить</button>` : '<span style="font-size: 0.75rem; color: var(--text-sub);">Создатель</span>'}
       `;
       box.appendChild(div);
     });
@@ -918,13 +1217,11 @@
     }
   }
 
-  // СКАНЕР ДИАГНОСТИКИ (ПРОВЕРКА НА 404 ПРЯМО НА САЙТЕ)
   async function runDiagnostics() {
     const logs = document.getElementById('diagLogs');
     logs.innerHTML = 'Проверка связности с GitHub Pages...<br>';
     const base = getBaseRepoUrl();
 
-    // 1. Проверяем vault.json
     try {
       const vRes = await fetch(new URL('vault.json', base).href + `?_cb=${Date.now()}`, { cache: 'no-store' });
       logs.innerHTML += `vault.json: ${vRes.ok ? '✅ Доступен (200 OK)' : '❌ Ошибка ' + vRes.status}<br>`;
@@ -932,9 +1229,8 @@
       logs.innerHTML += `vault.json: ❌ Недоступен<br>`;
     }
 
-    // 2. Проверяем каждый аудиофайл
     if (state.tracks.length === 0) {
-      logs.innerHTML += 'В каталоге нет треков для проверки.<br>';
+      logs.innerHTML += 'В каталоге нет треков.<br>';
       return;
     }
 
@@ -987,9 +1283,9 @@
       };
 
       exportVaultFile();
-      showAlert('initAlert', 'Файл vault.json создан и скачан. Загрузите его в корень репозитория Esp и обновите страницу.', 'success');
+      showBanner('initBanner', 'Файл vault.json сгенерирован и скачан! Загрузите его в корень репозитория Esp и обновите страницу.', 'success');
     } catch (err) {
-      showAlert('initAlert', 'Ошибка: ' + err.message, 'error');
+      showBanner('initBanner', 'Ошибка: ' + err.message, 'error');
     }
   }
 
@@ -1043,13 +1339,15 @@
   }
 
   function logout() {
-    if (state.currentAudioUrl) URL.revokeObjectURL(state.currentAudioUrl);
+    coreAudio.pause();
+    coreAudio.src = '';
+    if (state.currentBlobUrl) URL.revokeObjectURL(state.currentBlobUrl);
     state.vaultKey = null;
     state.currentUser = null;
     state.tracks = [];
     state.activeTrackIndex = -1;
-    document.getElementById('iosPlayerDock').classList.add('hidden');
-    openView('login');
+    document.getElementById('customPlayerDock').classList.add('hidden');
+    navigateTo('login');
   }
 
   function escapeHtml(str) {
