@@ -731,7 +731,7 @@
 
     <div class="system-banner" id="bannerAdmin"></div>
 
-    <!-- Вкладка: Загрузка файлов (MP3 или PDF) -->
+    <!-- Вкладка: Загрузка файлов -->
     <div id="tabContentUpload">
       <form onsubmit="onUploadFileSubmit(event)">
         <div class="field-box">
@@ -746,18 +746,18 @@
           <input type="text" id="uploadTitleInput" placeholder="Например: Секретный отчет №1" required>
         </div>
         <div class="field-box">
-          <label>Файл с устройства (авто-дробление на части)</label>
+          <label>Файл с устройства (AES-256 авто-дробление до 1-2 ГБ)</label>
           <input type="file" id="uploadFileInput" accept="audio/*,.mp3,.pdf">
         </div>
         <div class="field-box">
-          <label>Или прямая ссылка на зашифрованный файл (.enc / GitHub Releases)</label>
-          <input type="text" id="uploadUrlInput" placeholder="https://github.com/misha12333211-ctrl/Esp/releases/download/v1.0/doc.enc">
+          <label>Или ссылка на внешний файл (GitHub Releases, CDN)</label>
+          <input type="text" id="uploadUrlInput" placeholder="https://github.com/misha12333211-ctrl/Esp/releases/download/v.01/Aula.Internacional.Plus.1.1.pdf">
         </div>
-        <button type="submit" class="btn-submit" id="btnUploadSubmit">Зашифровать AES-256 и добавить</button>
+        <button type="submit" class="btn-submit" id="btnUploadSubmit">Сохранить в каталог</button>
       </form>
     </div>
 
-    <!-- Вкладка: Управление каталогом (УДАЛЕНИЕ) -->
+    <!-- Вкладка: Управление каталогом -->
     <div id="tabContentManage" class="hidden">
       <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 1rem;">
         Удаление файлов из каталога с обновлением манифеста:
@@ -862,7 +862,7 @@
     return window.location.origin + p;
   }
 
-  // БЕЗОПАСНАЯ САНИТИЗАЦИЯ СТРОК (Защита от XSS)
+  // САНИТИЗАЦИЯ СТРОК (XSS)
   function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -873,7 +873,7 @@
       .replace(/'/g, '&#39;');
   }
 
-  // САНИТИЗАЦИЯ ИМЕНИ ФАЙЛА (Защита от Path Traversal)
+  // САНИТИЗАЦИЯ ИМЕНИ ФАЙЛА
   function cleanFilename(str) {
     return str.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
   }
@@ -1018,7 +1018,7 @@
     }
   }
 
-  // ФИЛЬТРАЦИЯ И ОТРИСОВКА
+  // ФИЛЬТРАЦИЯ И СПИСОК
   function setFilter(type, btn) {
     state.currentFilter = type;
     document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
@@ -1083,66 +1083,9 @@
     });
   }
 
-  // ЗАГРУЗКА ОДИНОЧНОГО ФАЙЛА / РЕЛИЗА / ЧАНКА С ОБХОДОМ CORS
+  // ЗАГРУЗКА ЗАШИФРОВАННЫХ БАЙТОВ (ЧАНКИ / ЛОКАЛЬНЫЕ .ENC)
   async function fetchSingleBinary(filename, signal) {
     if (filename.startsWith('http://') || filename.startsWith('https://')) {
-      const ghRelMatch = filename.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/releases\/download\/([^\/]+)\/(.+)$/i);
-
-      // Если ссылка ведет на релиз GitHub — обходим CORS через GitHub API
-      if (ghRelMatch) {
-        const [, owner, repo, tag, rawFilename] = ghRelMatch;
-        const assetName = decodeURIComponent(rawFilename);
-        const token = (document.getElementById('inputGhToken')?.value || '').trim();
-
-        try {
-          const apiHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
-          const metaRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`, {
-            headers: apiHeaders,
-            cache: 'no-store',
-            signal
-          });
-
-          if (metaRes.ok) {
-            const relData = await metaRes.json();
-            const asset = (relData.assets || []).find(a => a.name.toLowerCase() === assetName.toLowerCase());
-
-            if (asset && asset.id) {
-              const dlHeaders = {
-                'Accept': 'application/octet-stream',
-                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-              };
-
-              const assetRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/assets/${asset.id}`, {
-                headers: dlHeaders,
-                signal
-              });
-
-              if (assetRes.ok) {
-                const buf = await assetRes.arrayBuffer();
-                if (buf.byteLength < 16) throw new Error('Файл пуст');
-                return buf;
-              }
-            }
-          }
-        } catch (apiErr) {
-          if (apiErr.name === 'AbortError') throw apiErr;
-          console.warn('GitHub API download failed, switching to proxy fallback...', apiErr);
-        }
-
-        // Резервный канал через прямой CORS-прокси
-        try {
-          const proxyRes = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(filename)}`, { signal });
-          if (proxyRes.ok) {
-            const buf = await proxyRes.arrayBuffer();
-            if (buf.byteLength < 16) throw new Error('Файл пуст');
-            return buf;
-          }
-        } catch (proxyErr) {
-          if (proxyErr.name === 'AbortError') throw proxyErr;
-        }
-      }
-
-      // Прямой запрос для внешних ссылок с поддержкой CORS (S3, CDN, Cloudflare R2 и др.)
       const res = await fetch(filename, { cache: 'no-store', signal });
       if (!res.ok) throw new Error(`HTTP ${res.status} (${filename})`);
       const buf = await res.arrayBuffer();
@@ -1150,7 +1093,6 @@
       return buf;
     }
 
-    // Загрузка локальных файлов из репозитория GitHub Pages
     const base = getBaseRepoUrl();
     const tryUrls = [
       new URL(`tracks/${filename}`, base).href,
@@ -1178,11 +1120,9 @@
     throw new Error(`Файл не найден. ${lastErr}`);
   }
 
-  // УМНЫЙ ЗАГРУЗЧИК (ПОДДЕРЖКА ЧАНКОВ ЛЮБОГО РАЗМЕРА И ПРЯМЫХ ССЫЛОК)
   async function fetchEncryptedData(target, signal, onProgress) {
     const item = (typeof target === 'object' && target !== null) ? target : { filename: target };
 
-    // Если файл разбит на части (chunks)
     if (Array.isArray(item.chunks) && item.chunks.length > 1) {
       const buffers = [];
       let totalLength = 0;
@@ -1196,7 +1136,6 @@
         totalLength += chunkBuf.byteLength;
       }
 
-      // Склеиваем все части в единый буфер в оперативной памяти
       const assembled = new Uint8Array(totalLength);
       let offset = 0;
       for (const b of buffers) {
@@ -1206,12 +1145,10 @@
       return assembled.buffer;
     }
 
-    // Одиночный файл
     const fname = (Array.isArray(item.chunks) && item.chunks.length === 1) ? item.chunks[0] : item.filename;
     return await fetchSingleBinary(fname, signal);
   }
 
-  // ПОЛНАЯ ОЧИСТКА АУДИОАППАРАТУРЫ (Решает зависание в Safari на 5 треке)
   function hardResetAudioEngine() {
     try {
       hardwareAudio.pause();
@@ -1219,13 +1156,13 @@
       hardwareAudio.load();
     } catch (_) {}
 
-    if (state.activeAudioBlobUrl) {
+    if (state.activeAudioBlobUrl && !state.activeAudioBlobUrl.startsWith('http')) {
       URL.revokeObjectURL(state.activeAudioBlobUrl);
-      state.activeAudioBlobUrl = null;
     }
+    state.activeAudioBlobUrl = null;
   }
 
-  // ВОСПРОИЗВЕДЕНИЕ АУДИО (Идеально без зависаний)
+  // ВОСПРОИЗВЕДЕНИЕ АУДИО
   async function playAudioItem(idx) {
     const item = state.items[idx];
     if (!item) return;
@@ -1239,19 +1176,30 @@
     state.activeAudioIndex = idx;
     renderLibrary();
 
-    // 1. Немедленная синхронная разблокировка Safari при тапе пользователя
     hardResetAudioEngine();
-    hardwareAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-    hardwareAudio.load();
-    hardwareAudio.play().catch(() => {});
-
     const dock = document.getElementById('customDock');
     const nameEl = document.getElementById('dockTrackName');
     const statusEl = document.getElementById('dockTrackStatus');
 
     dock.classList.remove('hidden');
     nameEl.textContent = item.title;
-    statusEl.textContent = 'Загрузка и дешифрование...';
+
+    // Прямой стриминг внешних аудиофайлов без лишних CORS
+    const isUrl = item.filename && (item.filename.startsWith('http://') || item.filename.startsWith('https://'));
+    const isDirectAudio = isUrl && !item.filename.toLowerCase().includes('.enc');
+
+    if (isDirectAudio) {
+      hardwareAudio.src = item.filename;
+      statusEl.textContent = 'Внешний защищенный аудиопоток';
+      hardwareAudio.play().catch(() => { statusEl.textContent = 'Нажмите ▶ для запуска'; });
+      return;
+    }
+
+    // Зашифрованные файлы (AES-256)
+    hardwareAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+    hardwareAudio.load();
+    hardwareAudio.play().catch(() => {});
+    statusEl.textContent = 'Дешифрование потока в RAM...';
 
     try {
       const buffer = await fetchEncryptedData(item, state.activeAbortController.signal, (cur, total) => {
@@ -1277,12 +1225,9 @@
       hardwareAudio.src = state.activeAudioBlobUrl;
       statusEl.textContent = 'Расшифровано в RAM (AES-256)';
       
-      const playPromise = hardwareAudio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          statusEl.textContent = 'Нажмите ▶ для воспроизведения';
-        });
-      }
+      hardwareAudio.play().catch(() => {
+        statusEl.textContent = 'Нажмите ▶ для воспроизведения';
+      });
 
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
@@ -1298,11 +1243,10 @@
     } catch (err) {
       if (err.name === 'AbortError') return;
       showBanner('bannerListener', `Ошибка трека «${escapeHtml(item.title)}»: ${err.message}`, 'error');
-      statusEl.textContent = 'Сбой дешифрования';
+      statusEl.textContent = 'Сбой воспроизведения';
     }
   }
 
-  // УПРАВЛЕНИЕ ПЛЕЕРОМ
   function togglePlayback() {
     if (!hardwareAudio.src) return;
     if (hardwareAudio.paused) {
@@ -1381,7 +1325,7 @@
     scrubber.addEventListener('mouseup', resetScrub);
   }
 
-  // ПРОСМОТРЩИК PDF
+  // ПРОСМОТРЩИК PDF (ПРЯМОЙ РЕНДЕРИНГ ИЛИ РАСШИФРОВКА)
   async function openPdfItem(idx) {
     const item = state.items[idx];
     if (!item) return;
@@ -1390,9 +1334,21 @@
     const frame = document.getElementById('pdfViewerFrame');
     const title = document.getElementById('pdfViewerTitle');
 
-    title.textContent = `Загрузка: ${item.title}...`;
     modal.classList.remove('hidden');
+    title.textContent = `Загрузка: ${item.title}...`;
 
+    // Если это прямая ссылка на незашифрованный файл (например, из GitHub Releases)
+    const isUrl = item.filename && (item.filename.startsWith('http://') || item.filename.startsWith('https://'));
+    const isPlainPdf = isUrl && !item.filename.toLowerCase().includes('.enc');
+
+    if (isPlainPdf) {
+      frame.src = item.filename;
+      title.textContent = item.title;
+      state.activePdfBlobUrl = item.filename;
+      return;
+    }
+
+    // Если это зашифрованный документ (.enc)
     try {
       const buffer = await fetchEncryptedData(item, undefined, (cur, total) => {
         title.textContent = `Загрузка части ${cur} из ${total}: ${item.title}...`;
@@ -1407,7 +1363,7 @@
         ciphertext
       );
 
-      if (state.activePdfBlobUrl) {
+      if (state.activePdfBlobUrl && !state.activePdfBlobUrl.startsWith('http')) {
         URL.revokeObjectURL(state.activePdfBlobUrl);
       }
 
@@ -1417,7 +1373,7 @@
       frame.src = state.activePdfBlobUrl;
       title.textContent = item.title;
     } catch (e) {
-      alert("Не удалось расшифровать документ: " + e.message);
+      alert("Не удалось загрузить или расшифровать документ: " + e.message);
       closePdfViewer();
     }
   }
@@ -1433,10 +1389,10 @@
     const frame = document.getElementById('pdfViewerFrame');
     frame.src = 'about:blank';
     modal.classList.add('hidden');
-    if (state.activePdfBlobUrl) {
+    if (state.activePdfBlobUrl && !state.activePdfBlobUrl.startsWith('http')) {
       URL.revokeObjectURL(state.activePdfBlobUrl);
-      state.activePdfBlobUrl = null;
     }
+    state.activePdfBlobUrl = null;
   }
 
   // АДМИНИСТРАТИВНЫЕ ФУНКЦИИ
@@ -1459,7 +1415,7 @@
     }
   }
 
-  // ЗАГРУЗКА И ШИФРОВАНИЕ НОВОГО ФАЙЛА (С АВТО-ДРОБЛЕНИЕМ)
+  // ЗАГРУЗКА И ШИФРОВАНИЕ НОВОГО ФАЙЛА
   async function onUploadFileSubmit(e) {
     e.preventDefault();
     const type = document.getElementById('uploadTypeSelect').value;
@@ -1476,7 +1432,7 @@
     try {
       btn.disabled = true;
 
-      // Вариант 1: Прямая ссылка на файл (GitHub Releases, S3, CDN)
+      // 1. Прямая ссылка (GitHub Releases, Cloud)
       if (!file && directUrl) {
         state.items.push({
           id: `ext_${Date.now()}`,
@@ -1493,10 +1449,10 @@
         const repo = document.getElementById('inputGhRepo').value.trim();
         if (token && repo) {
           await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), 'Update catalog manifest');
-          showBanner('bannerAdmin', 'Файл успешно добавлен в каталог и опубликован на GitHub!', 'success');
+          showBanner('bannerAdmin', 'Ссылка успешно сохранена и опубликована на GitHub!', 'success');
         } else {
           exportVaultDirectly();
-          showBanner('bannerAdmin', 'Файл добавлен. Обновленный vault.json скачан — загрузите его в корень репозитория.', 'success');
+          showBanner('bannerAdmin', 'Файл добавлен. Обновленный vault.json скачан — замените его в репозитории на GitHub.', 'success');
         }
 
         document.getElementById('uploadTitleInput').value = '';
@@ -1504,7 +1460,7 @@
         return;
       }
 
-      // Вариант 2: Локальный файл с нарезкой по 15 МБ
+      // 2. Локальный файл с шифрованием AES-256 и нарезкой по 15 МБ
       showBanner('bannerAdmin', 'Шифрование файла AES-256-GCM в памяти RAM...', 'success');
 
       const fileBuffer = await file.arrayBuffer();
@@ -1730,10 +1686,10 @@
     }
   }
 
-  // ДИАГНОСТИКА СВЯЗНОСТИ
+  // ДИАГНОСТИКА
   async function runDiagScan() {
     const out = document.getElementById('diagLogsOutput');
-    out.innerHTML = 'Проверка файлов по прямым HTTP ссылкам...<br>';
+    out.innerHTML = 'Проверка доступности файлов...<br>';
     const base = getBaseRepoUrl();
 
     try {
@@ -1744,6 +1700,10 @@
     }
 
     for (const it of state.items) {
+      if (it.filename && (it.filename.startsWith('http://') || it.filename.startsWith('https://'))) {
+        out.innerHTML += `<b>${escapeHtml(it.title)}</b>: 🌐 Прямая ссылка (открытие через Safari)<br>`;
+        continue;
+      }
       try {
         await fetchEncryptedData(it);
         const chunkInfo = (it.chunks && it.chunks.length > 1) ? ` (${it.chunks.length} частей)` : '';
