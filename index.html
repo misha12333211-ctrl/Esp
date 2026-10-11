@@ -223,12 +223,6 @@
       background: rgba(255, 255, 255, 0.15);
     }
 
-    .btn-danger {
-      background: rgba(255, 69, 58, 0.15);
-      color: var(--danger);
-      border: 1px solid rgba(255, 69, 58, 0.35);
-    }
-
     /* УВЕДОМЛЕНИЯ */
     .system-banner {
       padding: 0.9rem 1.1rem;
@@ -563,6 +557,7 @@
       align-items: center;
       background: rgba(18, 18, 24, 0.95);
       border-bottom: 1px solid var(--border);
+      gap: 0.5rem;
     }
 
     .pdf-title {
@@ -571,7 +566,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 70%;
+      flex: 1;
     }
 
     .pdf-frame {
@@ -711,7 +706,10 @@
   <div class="pdf-modal hidden" id="pdfViewerModal">
     <div class="pdf-header">
       <div class="pdf-title" id="pdfViewerTitle">Документ PDF</div>
-      <button class="ios-chip" onclick="closePdfViewer()">Готово</button>
+      <div style="display: flex; gap: 0.4rem;">
+        <button class="ios-chip" id="btnOpenExternalPdf" onclick="openPdfInNewTab()" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">В Safari ↗</button>
+        <button class="ios-chip" onclick="closePdfViewer()">Готово</button>
+      </div>
     </div>
     <iframe class="pdf-frame" id="pdfViewerFrame"></iframe>
   </div>
@@ -748,12 +746,12 @@
           <input type="text" id="uploadTitleInput" placeholder="Например: Секретный отчет №1" required>
         </div>
         <div class="field-box">
-          <label>Файл любого размера (авто-дробление на части)</label>
+          <label>Файл с устройства (авто-дробление на части)</label>
           <input type="file" id="uploadFileInput" accept="audio/*,.mp3,.pdf">
         </div>
         <div class="field-box">
           <label>Или прямая ссылка на зашифрованный файл (.enc / GitHub Releases)</label>
-          <input type="text" id="uploadUrlInput" placeholder="https://github.com/.../download/v1.0/file.enc">
+          <input type="text" id="uploadUrlInput" placeholder="https://github.com/misha12333211-ctrl/Esp/releases/download/v1.0/doc.enc">
         </div>
         <button type="submit" class="btn-submit" id="btnUploadSubmit">Зашифровать AES-256 и добавить</button>
       </form>
@@ -848,7 +846,7 @@
   };
 
   const hardwareAudio = document.getElementById('hardwareAudio');
-  const CHUNK_SIZE = 15 * 1024 * 1024; // 15 МБ — гарантированно безопасно под любые лимиты GitHub
+  const CHUNK_SIZE = 15 * 1024 * 1024; // 15 МБ под лимиты веб-загрузки GitHub
 
   // БАЗОВЫЙ URL РЕПОЗИТОРИЯ
   function getBaseRepoUrl() {
@@ -1085,9 +1083,66 @@
     });
   }
 
-  // ЗАГРУЗКА ОДИНОЧНОГО ФАЙЛА / ЧАНКА С СЕРВЕРА
+  // ЗАГРУЗКА ОДИНОЧНОГО ФАЙЛА / РЕЛИЗА / ЧАНКА С ОБХОДОМ CORS
   async function fetchSingleBinary(filename, signal) {
     if (filename.startsWith('http://') || filename.startsWith('https://')) {
+      const ghRelMatch = filename.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/releases\/download\/([^\/]+)\/(.+)$/i);
+
+      // Если ссылка ведет на релиз GitHub — обходим CORS через GitHub API
+      if (ghRelMatch) {
+        const [, owner, repo, tag, rawFilename] = ghRelMatch;
+        const assetName = decodeURIComponent(rawFilename);
+        const token = (document.getElementById('inputGhToken')?.value || '').trim();
+
+        try {
+          const apiHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+          const metaRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`, {
+            headers: apiHeaders,
+            cache: 'no-store',
+            signal
+          });
+
+          if (metaRes.ok) {
+            const relData = await metaRes.json();
+            const asset = (relData.assets || []).find(a => a.name.toLowerCase() === assetName.toLowerCase());
+
+            if (asset && asset.id) {
+              const dlHeaders = {
+                'Accept': 'application/octet-stream',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+              };
+
+              const assetRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/assets/${asset.id}`, {
+                headers: dlHeaders,
+                signal
+              });
+
+              if (assetRes.ok) {
+                const buf = await assetRes.arrayBuffer();
+                if (buf.byteLength < 16) throw new Error('Файл пуст');
+                return buf;
+              }
+            }
+          }
+        } catch (apiErr) {
+          if (apiErr.name === 'AbortError') throw apiErr;
+          console.warn('GitHub API download failed, switching to proxy fallback...', apiErr);
+        }
+
+        // Резервный канал через прямой CORS-прокси
+        try {
+          const proxyRes = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(filename)}`, { signal });
+          if (proxyRes.ok) {
+            const buf = await proxyRes.arrayBuffer();
+            if (buf.byteLength < 16) throw new Error('Файл пуст');
+            return buf;
+          }
+        } catch (proxyErr) {
+          if (proxyErr.name === 'AbortError') throw proxyErr;
+        }
+      }
+
+      // Прямой запрос для внешних ссылок с поддержкой CORS (S3, CDN, Cloudflare R2 и др.)
       const res = await fetch(filename, { cache: 'no-store', signal });
       if (!res.ok) throw new Error(`HTTP ${res.status} (${filename})`);
       const buf = await res.arrayBuffer();
@@ -1095,6 +1150,7 @@
       return buf;
     }
 
+    // Загрузка локальных файлов из репозитория GitHub Pages
     const base = getBaseRepoUrl();
     const tryUrls = [
       new URL(`tracks/${filename}`, base).href,
@@ -1150,7 +1206,7 @@
       return assembled.buffer;
     }
 
-    // Если файл одиночный
+    // Одиночный файл
     const fname = (Array.isArray(item.chunks) && item.chunks.length === 1) ? item.chunks[0] : item.filename;
     return await fetchSingleBinary(fname, signal);
   }
@@ -1204,8 +1260,8 @@
       if (currentSession !== state.loadingSessionId) return;
 
       const bytes = new Uint8Array(buffer);
-      const iv = bytes.slice(0, 12);
-      const ciphertext = bytes.slice(12);
+      const iv = bytes.subarray(0, 12);
+      const ciphertext = bytes.subarray(12);
 
       const decrypted = await crypto.subtle.decrypt(
         { name: "AES-GCM", iv: iv },
@@ -1311,15 +1367,18 @@
 
   function initScrubberEvents() {
     const scrubber = document.getElementById('dockScrubber');
-    scrubber.addEventListener('input', () => {
-      state.isScrubbing = true;
-    });
-    scrubber.addEventListener('change', () => {
-      if (hardwareAudio.duration) {
+    const resetScrub = () => {
+      if (state.isScrubbing && hardwareAudio.duration) {
         hardwareAudio.currentTime = (scrubber.value / 100) * hardwareAudio.duration;
       }
       state.isScrubbing = false;
-    });
+    };
+
+    scrubber.addEventListener('input', () => { state.isScrubbing = true; });
+    scrubber.addEventListener('change', resetScrub);
+    scrubber.addEventListener('touchend', resetScrub);
+    scrubber.addEventListener('touchcancel', resetScrub);
+    scrubber.addEventListener('mouseup', resetScrub);
   }
 
   // ПРОСМОТРЩИК PDF
@@ -1339,8 +1398,8 @@
         title.textContent = `Загрузка части ${cur} из ${total}: ${item.title}...`;
       });
       const bytes = new Uint8Array(buffer);
-      const iv = bytes.slice(0, 12);
-      const ciphertext = bytes.slice(12);
+      const iv = bytes.subarray(0, 12);
+      const ciphertext = bytes.subarray(12);
 
       const decrypted = await crypto.subtle.decrypt(
         { name: "AES-GCM", iv: iv },
@@ -1360,6 +1419,12 @@
     } catch (e) {
       alert("Не удалось расшифровать документ: " + e.message);
       closePdfViewer();
+    }
+  }
+
+  function openPdfInNewTab() {
+    if (state.activePdfBlobUrl) {
+      window.open(state.activePdfBlobUrl, '_blank');
     }
   }
 
@@ -1411,7 +1476,7 @@
     try {
       btn.disabled = true;
 
-      // Вариант 1: Указана прямая ссылка на зашифрованный файл (например из GitHub Releases)
+      // Вариант 1: Прямая ссылка на файл (GitHub Releases, S3, CDN)
       if (!file && directUrl) {
         state.items.push({
           id: `ext_${Date.now()}`,
@@ -1439,7 +1504,7 @@
         return;
       }
 
-      // Вариант 2: Загрузка локального файла с авто-разбиением на части
+      // Вариант 2: Локальный файл с нарезкой по 15 МБ
       showBanner('bannerAdmin', 'Шифрование файла AES-256-GCM в памяти RAM...', 'success');
 
       const fileBuffer = await file.arrayBuffer();
@@ -1460,7 +1525,6 @@
       let chunkList = [];
       let chunkData = [];
 
-      // Проверяем, нужно ли разбивать на части
       if (combined.byteLength <= CHUNK_SIZE) {
         chunkList = [baseFilename];
         chunkData = [{ filename: baseFilename, buffer: combined.buffer }];
