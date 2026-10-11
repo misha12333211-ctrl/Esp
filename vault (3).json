@@ -1,0 +1,14 @@
+{
+  "users": {
+    "5016fe997f995f4129fdfbcdb0ccda78a2e0eb043aca874e33f443fe16788096": {
+      "role": "admin",
+      "salt": "GmcHo+V8pMtwCdjMGtwjoQ==",
+      "iv": "IDIE8lKq+XXcZkKl",
+      "encKey": "ayP7XyX2hK33Lr5+EGZixLwcbk2PtY7d2ijrHHJ3Rd4pOEOYR1O7iQSyec5Oyybl"
+    }
+  },
+  "catalog": {
+    "iv": "POZDZamVIBJGn37i",
+    "data": "UHg0hDy219YneCDFaOfAla4HAvQyaPMVtzknAk6jCsDP9DEHOo/B7t85u9Gz1ArnYLNS7q7QYzxWBRZ24QqsuG4CoX10t8ACfN/0aWhLttO2UwXOktpptHPeKbnlgbMyuxrJK3Z1pJeLVlJVPcMMiIrMizOKHvT0aUQro59M5Qkkvq1QE2rX/GKaC9HI0KNL4ULdVwAtkbEstBsz2/IKYKiB6nfe1HFcboYt/lgR7dBW5sNMCSZrpyw1bvnfoTAefRNh0+TnApiJorRf3+YSc/jPHg8Cu7zEo8vbSEVfXqGxccZwwVNWRMqatTh4JbL7eG259sGdHq0tfzD40MsmlJJY6+ezqVduPCc33oofA0g8CzsN18RlyTPr4cvfPSbjao2yRDFzVOo7yoW3i2I9Dvj92JX2BWvuv98GSBfVx8LKrdt8Gkg2yX0VeD6w4VoA4x60oDXPrMTOU+uc/CHlYHVDkwz2L54/8GTEGHgpZLPAhEAoH+3xhuCZJMsjEHcE0qlVduWMikQIeToYMVN74zFRIa3VwavkJIAS9pLn1w6QG+LePR6SQptsdbek8zaYN6udPvUuMiLeK/rhlTkxa3Ox/W3dzhrmWay3XOqLPOC2DLfiZKppG/+MRTcZGI4eMqpr16GWdLj2"
+  }
+}
