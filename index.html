@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Español — Diálogos</title>
+<style>
+:root {
+--primary: #c2410c;
+--primary-hover: #9a3412;
+--bg: #f8fafc;
+--card-bg: #ffffff;
+--text: #0f172a;
+--muted: #64748b;
+--border: #e2e8f0;
+--radius: 14px;
+}
+​* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+-webkit-tap-highlight-color: transparent;
+}
+​body {
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+background-color: var(--bg);
+color: var(--text);
+line-height: 1.6;
+padding: 24px 16px 80px;
+}
+​.container {
+max-width: 680px;
+margin: 0 auto;
+}
+​/* Экран ввода пароля */
+#lock-screen {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+min-height: 70vh;
+text-align: center;
+}
+​.lock-card {
+background: var(--card-bg);
+padding: 36px 28px;
+border-radius: var(--radius);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+width: 100%;
+max-width: 420px;
+border: 1px solid var(--border);
+}
+​.lock-card h1 {
+font-size: 1.5rem;
+margin-bottom: 8px;
+}
+​.lock-card p {
+color: var(--muted);
+font-size: 0.95rem;
+margin-bottom: 24px;
+}
+​.input-group {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+​input[type="password"] {
+width: 100%;
+padding: 14px 16px;
+font-size: 1rem;
+border: 1.5px solid var(--border);
+border-radius: 10px;
+outline: none;
+transition: border-color 0.2s;
+}
+​input[type="password"]:focus {
+border-color: var(--primary);
+}
+​button.btn-unlock {
+background: var(--primary);
+color: white;
+border: none;
+padding: 14px;
+font-size: 1rem;
+font-weight: 600;
+border-radius: 10px;
+cursor: pointer;
+transition: background 0.2s;
+}
+​button.btn-unlock:hover {
+background: var(--primary-hover);
+}
+​.error-msg {
+color: #dc2626;
+font-size: 0.88rem;
+margin-top: 10px;
+display: none;
+}
+​/* Основной контент (скрыт до ввода пароля) */
+#app-content {
+display: none;
+}
+​header {
+text-align: center;
+margin-bottom: 28px;
+}
+​header h1 {
+font-size: 1.75rem;
+color: #1e293b;
+margin-bottom: 6px;
+}
+​header p {
+color: var(--muted);
+font-size: 0.95rem;
+}
+​.dialogue-card {
+background: var(--card-bg);
+border-radius: var(--radius);
+padding: 22px;
+margin-bottom: 24px;
+border: 1px solid var(--border);
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+​.dialogue-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 14px;
+}
+​.dialogue-title {
+font-size: 1.2rem;
+font-weight: 700;
+color: #1e293b;
+}
+​.badge {
+background: #ffedd5;
+color: #9a3412;
+font-size: 0.75rem;
+font-weight: 600;
+padding: 4px 10px;
+border-radius: 999px;
+}
+​audio {
+width: 100%;
+height: 44px;
+margin-bottom: 16px;
+outline: none;
+}
+​.lines-container {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+​.line-row {
+background: #f8fafc;
+padding: 12px 14px;
+border-radius: 8px;
+border-left: 3px solid var(--primary);
+}
+​.speaker {
+font-weight: 700;
+color: var(--primary);
+margin-right: 6px;
+}
+​.text-es {
+font-size: 1rem;
+color: #1e293b;
+}
+​.text-ru {
+font-size: 0.88rem;
+color: var(--muted);
+margin-top: 4px;
+}
+​.toggle-ru-btn {
+background: transparent;
+border: 1px solid var(--border);
+color: var(--muted);
+font-size: 0.85rem;
+padding: 6px 12px;
+border-radius: 6px;
+cursor: pointer;
+margin-top: 12px;
+display: inline-block;
+}
+​.toggle-ru-btn:hover {
+background: #e2e8f0;
+}
+​.logout-bar {
+display: flex;
+justify-content: flex-end;
+margin-bottom: 16px;
+}
+​.btn-logout {
+background: none;
+border: none;
+color: var(--muted);
+font-size: 0.85rem;
+cursor: pointer;
+text-decoration: underline;
+}
+</style>
+</head>
+<body>
+​<div class="container">
+​<!-- Экран блокировки -->
+<div id="lock-screen">
+<div class="lock-card">
+<h1>🔒 Acceso Privado</h1>
+<p>Материалы курса защищены. Введите пароль для доступа.</p>
+<form class="input-group" onsubmit="event.preventDefault(); verifyPassword();">
+<input type="password" id="password-field" placeholder="Пароль" autocomplete="current-password" autofocus required>
+<button type="submit" class="btn-unlock">Войти</button>
+</form>
+<div id="error-msg" class="error-msg">Неверный пароль. Попробуйте еще раз.</div>
+</div>
+</div>
+​<!-- Защищенный контент -->
+<div id="app-content">
+<div class="logout-bar">
+<button class="btn-logout" onclick="logout()">Выйти</button>
+</div>
+​<header>
+<h1>🇪🇸 Diálogos en Español</h1>
+<p>Слушайте аудиозаписи, повторяйте интонацию и сверяйтесь с переводом</p>
+</header>
+​<!-- Диалог 1 -->
+<article class="dialogue-card">
+<div class="dialogue-header">
+<h2 class="dialogue-title">Diálogo 1: En la cafetería</h2>
+<span class="badge">Nivel A1</span>
+</div>
+​<!-- Аудиофайл (должен лежать рядом с index.html в репозитории GitHub) -->
+<audio controls preload="none">
+<source src="dialogo_1.mp3" type="audio/mpeg">
+Ваш браузер не поддерживает воспроизведение звука.
+</audio>
+​<div class="lines-container">
+<div class="line-row">
+<div><span class="speaker">Camarero:</span><span class="text-es">¡Hola! Buenas tardes, ¿qué te pongo?</span></div>
+<div class="text-ru">Здравствуйте! Добрый день, что вам принести?</div>
+</div>
+<div class="line-row">
+<div><span class="speaker">Elena:</span><span class="text-es">Hola. Para mí un café con leche y una tostada con tomate, por favor.</span></div>
+<div class="text-ru">Здравствуйте. Мне кофе с молоком и тост с помидором, пожалуйста.</div>
+</div>
+<div class="line-row">
+<div><span class="speaker">Camarero:</span><span class="text-es">¿La leche fría, templada o caliente?</span></div>
+<div class="text-ru">Молоко холодное, теплое или горячее?</div>
+</div>
+<div class="line-row">
+<div><span class="speaker">Elena:</span><span class="text-es">Caliente, gracias. ¿Cuánto es?</span></div>
+<div class="text-ru">Горячее, спасибо. Сколько с меня?</div>
+</div>
+</div>
+​<button class="toggle-ru-btn" onclick="toggleTranslations(this)">Скрыть перевод</button>
+</article>
+​<!-- Диалог 2 -->
+<article class="dialogue-card">
+<div class="dialogue-header">
+<h2 class="dialogue-title">Diálogo 2: Preguntando por la calle</h2>
+<span class="badge">Nivel A2</span>
+</div>
+​<audio controls preload="none">
+<source src="dialogo_2.mp3" type="audio/mpeg">
+Ваш браузер не поддерживает воспроизведение звука.
+</audio>
+​<div class="lines-container">
+<div class="line-row">
+<div><span class="speaker">Turista:</span><span class="text-es">Disculpe, ¿sabe si la estación de tren está lejos de aquí?</span></div>
+<div class="text-ru">Извините, вы не знаете, железнодорожный вокзал далеко отсюда?</div>
+</div>
+<div class="line-row">
+<div><span class="speaker">Transeúnte:</span><span class="text-es">No, está bastante cerca. Siga todo recto por esta avenida unos cinco minutos.</span></div>
+<div class="text-ru">Нет, довольно близко. Идите прямо по этому проспекту около пяти минут.</div>
+</div>
+<div class="line-row">
+<div><span class="speaker">Turista:</span><span class="text-es">Muchas gracias, muy amable.</span></div>
+<div class="text-ru">Большое спасибо, очень любезно.</div>
+</div>
+</div>
+​<button class="toggle-ru-btn" onclick="toggleTranslations(this)">Скрыть перевод</button>
+</article>
+​</div>
+</div>
+​<script>
+// Хэш SHA-256 от пароля по умолчанию: "espanol2026"
+// Даже открыв исходный код в браузере, пароль в открытом виде прочитать нельзя.
+const PASSWORD_HASH = "8f36c53545b73fdf081fc7e8a9f60cb0fc27fa2f33668817a1005a74ef43d395";
+​async function sha256(message) {
+const msgBuffer = new TextEncoder().encode(message);
+const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+const hashArray = Array.from(new Uint8Array(hashBuffer));
+return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+​async function verifyPassword() {
+const input = document.getElementById('password-field').value.trim();
+const errorMsg = document.getElementById('error-msg');
+const hash = await sha256(input);
+​if (hash === PASSWORD_HASH) {
+localStorage.setItem('auth_token', hash);
+unlock();
+} else {
+errorMsg.style.display = 'block';
+}
+}
+​function unlock() {
+document.getElementById('lock-screen').style.display = 'none';
+document.getElementById('app-content').style.display = 'block';
+}
+​function logout() {
+localStorage.removeItem('auth_token');
+location.reload();
+}
+​function toggleTranslations(button) {
+const card = button.closest('.dialogue-card');
+const translations = card.querySelectorAll('.text-ru');
+const isHidden = translations[0].style.display === 'none';
+​translations.forEach(el => {
+el.style.display = isHidden ? 'block' : 'none';
+});
+​button.innerText = isHidden ? 'Скрыть перевод' : 'Показать перевод';
+}
+​// Автоматический вход при наличии сохраненного ключа в браузере
+window.addEventListener('DOMContentLoaded', () => {
+const savedHash = localStorage.getItem('auth_token');
+if (savedHash === PASSWORD_HASH) {
+unlock();
+}
+});
+</script>
+</body>
+</html>
