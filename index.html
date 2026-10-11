@@ -2,26 +2,26 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   <title>CyberVault — Безопасное хранилище</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' blob: data: https:; frame-src * blob: data:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' blob: data: https:; connect-src 'self' blob: https://api.github.com https:; object-src 'none';">
 
   <style>
     :root {
       --bg: #000000;
-      --surface: rgba(18, 18, 24, 0.85);
-      --surface-card: rgba(26, 26, 36, 0.72);
-      --surface-active: rgba(40, 40, 56, 0.85);
-      --border: rgba(255, 255, 255, 0.09);
-      --border-accent: rgba(16, 185, 129, 0.4);
+      --surface: rgba(18, 18, 24, 0.88);
+      --surface-card: rgba(26, 26, 36, 0.75);
+      --surface-active: rgba(40, 40, 56, 0.9);
+      --border: rgba(255, 255, 255, 0.1);
+      --border-accent: rgba(16, 185, 129, 0.45);
       --accent: #10b981;
       --accent-glow: rgba(16, 185, 129, 0.25);
       --danger: #ff453a;
       --text: #ffffff;
-      --text-sub: #8e8e93;
+      --text-sub: #9ca3af;
       --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     }
 
@@ -57,7 +57,6 @@
       flex: 1;
     }
 
-    /* ШАПКА */
     header {
       display: flex;
       justify-content: space-between;
@@ -75,7 +74,7 @@
       width: 36px;
       height: 36px;
       border-radius: 11px;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0.04));
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.05));
       border: 1px solid rgba(16, 185, 129, 0.35);
       display: flex;
       align-items: center;
@@ -115,7 +114,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: transform 0.15s ease, background 0.2s ease;
     }
 
     .ios-chip:active {
@@ -141,7 +140,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      transition: all 0.15s;
+      transition: transform 0.15s ease, background 0.15s ease;
     }
 
     .ios-back-btn:active {
@@ -149,7 +148,6 @@
       background: rgba(255, 255, 255, 0.16);
     }
 
-    /* КАРТОЧКИ */
     .glass-card {
       background: var(--surface);
       backdrop-filter: blur(30px);
@@ -168,7 +166,6 @@
       margin-bottom: 1.1rem;
     }
 
-    /* ПОЛЯ ВВОДА */
     .field-box {
       margin-bottom: 1.1rem;
       display: flex;
@@ -197,11 +194,11 @@
       border-radius: 16px;
       font-size: 16px;
       outline: none;
-      transition: all 0.2s;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
       user-select: text;
     }
 
-    input:focus, select:focus {
+    input:focus-visible, select:focus-visible {
       border-color: var(--accent);
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
@@ -246,7 +243,6 @@
       background: rgba(255, 255, 255, 0.15);
     }
 
-    /* УВЕДОМЛЕНИЯ */
     .system-banner {
       padding: 0.9rem 1.1rem;
       border-radius: 14px;
@@ -271,7 +267,6 @@
       color: #a7f3d0;
     }
 
-    /* КАТАЛОГ И ФИЛЬТРЫ */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -302,6 +297,7 @@
       font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
     }
 
     .filter-pill.active {
@@ -328,7 +324,7 @@
       align-items: center;
       gap: 0.9rem;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), background 0.2s ease, border-color 0.2s ease;
     }
 
     .item-card:active {
@@ -390,7 +386,6 @@
       margin-top: 0.2rem;
     }
 
-    /* ЭКВАЛАЙЗЕР */
     .mini-eq {
       display: none;
       align-items: flex-end;
@@ -419,7 +414,6 @@
       100% { height: 16px; }
     }
 
-    /* ПЛЕЕР IOS */
     .player-dock {
       position: fixed;
       left: 1rem;
@@ -531,7 +525,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: transform 0.15s ease, color 0.15s ease;
     }
 
     .btn-ctrl:active {
@@ -553,7 +547,6 @@
       background: var(--accent);
     }
 
-    /* ПОЛНОЭКРАННЫЙ ПРОСМОТРЩИК PDF */
     .pdf-modal {
       position: fixed;
       top: 0;
@@ -610,7 +603,6 @@
       background: #111116;
     }
 
-    /* КАРТОЧКА ВНЕШНЕГО ДОКУМЕНТА (РЕШАЕТ ПРОБЛЕМУ НЕРАБОЧЕЙ КНОПКИ) */
     .external-doc-card {
       margin: auto;
       width: 90%;
@@ -639,7 +631,6 @@
       justify-content: center;
     }
 
-    /* АДМИН-ПАНЕЛЬ */
     .admin-nav {
       display: flex;
       gap: 0.35rem;
@@ -686,7 +677,6 @@
 <body>
 
 <div class="app-shell">
-  <!-- ВЕРХНИЙ БАР -->
   <header>
     <div class="brand-group">
       <div class="brand-badge">
@@ -697,24 +687,22 @@
     <div class="header-actions" id="headerControls"></div>
   </header>
 
-  <!-- 1. ЭКРАН ВХОДА -->
   <section class="glass-card" id="viewLogin">
     <h2>Безопасный доступ</h2>
     <div class="system-banner" id="bannerLogin"></div>
     <form onsubmit="onLoginSubmit(event)">
       <div class="field-box">
-        <label>Логин пользователя</label>
+        <label for="inputUser">Логин пользователя</label>
         <input type="text" id="inputUser" placeholder="Ваш логин" required autocomplete="username" autocapitalize="none">
       </div>
       <div class="field-box">
-        <label>Секретный пароль</label>
+        <label for="inputPass">Секретный пароль</label>
         <input type="password" id="inputPass" placeholder="Пароль доступа" required autocomplete="current-password">
       </div>
       <button type="submit" class="btn-submit" id="btnLoginSubmit">Открыть защищенный Vault</button>
     </form>
   </section>
 
-  <!-- 2. ЭКРАН СЛУШАТЕЛЯ / БИБЛИОТЕКИ -->
   <section class="hidden" id="viewListener">
     <div class="system-banner" id="bannerListener"></div>
     <div class="section-header">
@@ -722,17 +710,14 @@
       <div style="font-size: 0.8rem; color: var(--text-sub);" id="counterLabel">0 файлов</div>
     </div>
 
-    <!-- Фильтры -->
     <div class="filter-pills">
       <button class="filter-pill active" onclick="setFilter('all', this)">Все</button>
       <button class="filter-pill" onclick="setFilter('audio', this)">Аудио</button>
       <button class="filter-pill" onclick="setFilter('pdf', this)">Документы PDF</button>
     </div>
 
-    <!-- Список треков и документов -->
     <div class="items-stream" id="itemsContainer"></div>
 
-    <!-- ПАРЯЩИЙ КАСТОМНЫЙ ПЛЕЕР -->
     <div class="player-dock hidden" id="customDock">
       <div class="dock-meta">
         <div class="dock-title-box">
@@ -742,7 +727,7 @@
       </div>
 
       <div class="scrubber-wrap">
-        <input type="range" class="scrubber" id="dockScrubber" min="0" max="100" value="0">
+        <input type="range" class="scrubber" id="dockScrubber" min="0" max="100" value="0" aria-label="Прогресс воспроизведения">
         <div class="time-labels">
           <span id="labelCurrentTime">0:00</span>
           <span id="labelDuration">0:00</span>
@@ -750,21 +735,20 @@
       </div>
 
       <div class="dock-controls">
-        <button class="btn-ctrl" onclick="seekBy(-15)" title="Назад 15 сек">
+        <button class="btn-ctrl" onclick="seekBy(-15)" title="Назад 15 сек" aria-label="Назад 15 секунд">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
         </button>
-        <button class="btn-ctrl btn-ctrl-main" id="btnPlayPause" onclick="togglePlayback()">
+        <button class="btn-ctrl btn-ctrl-main" id="btnPlayPause" onclick="togglePlayback()" aria-label="Воспроизведение / Пауза">
           <svg id="svgPlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           <svg id="svgPause" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
-        <button class="btn-ctrl" onclick="seekBy(15)" title="Вперед 15 сек">
+        <button class="btn-ctrl" onclick="seekBy(15)" title="Вперед 15 сек" aria-label="Вперед 15 секунд">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg>
         </button>
       </div>
     </div>
   </section>
 
-  <!-- 3. ПРОСМОТРЩИК PDF С КНОПКОЙ «НАЗАД» И РАБОЧИМ ОТКРЫТИЕМ -->
   <div class="pdf-modal hidden" id="pdfViewerModal">
     <div class="pdf-header">
       <button class="ios-back-btn" onclick="closePdfViewer()">
@@ -772,18 +756,17 @@
         Назад
       </button>
       <div class="pdf-title" id="pdfViewerTitle">Документ PDF</div>
-      <button class="ios-chip" id="btnOpenExternalPdf" onclick="openPdfInNewTab()" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">В Safari ↗</button>
+      <button class="ios-chip" id="btnOpenExternalPdf" onclick="openPdfInNewTab()" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">Открыть ↗</button>
     </div>
 
     <div class="pdf-body-container" id="pdfBodyContainer">
-      <!-- Для внешних файлов (Релизы GitHub) выводится активная карточка -->
       <div class="external-doc-card hidden" id="externalDocCard">
         <div class="doc-icon-large">
           <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
         </div>
         <div>
           <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem;" id="extCardTitle">Документ PDF</div>
-          <div style="font-size: 0.8rem; color: var(--text-sub);">Внешний защищенный файл (168 МБ)</div>
+          <div style="font-size: 0.8rem; color: var(--text-sub);">Внешний защищенный файл</div>
         </div>
         <button class="btn-submit" onclick="openPdfInNewTab()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
@@ -795,12 +778,10 @@
         </button>
       </div>
 
-      <!-- Фрейм для встроенных зашифрованных документов -->
-      <iframe class="pdf-frame" id="pdfViewerFrame" sandbox="allow-scripts allow-same-origin allow-popups allow-downloads allow-top-navigation"></iframe>
+      <iframe class="pdf-frame" id="pdfViewerFrame" sandbox="allow-scripts allow-popups allow-downloads"></iframe>
     </div>
   </div>
 
-  <!-- 4. ПАНЕЛЬ АДМИНИСТРАТОРА С КНОПКОЙ «НАЗАД» -->
   <section class="glass-card hidden" id="viewAdmin">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
       <button class="ios-back-btn" onclick="showScreen('listener')">
@@ -821,33 +802,31 @@
 
     <div class="system-banner" id="bannerAdmin"></div>
 
-    <!-- Вкладка: Загрузка файлов -->
     <div id="tabContentUpload">
       <form onsubmit="onUploadFileSubmit(event)">
         <div class="field-box">
-          <label>Тип файла</label>
+          <label for="uploadTypeSelect">Тип файла</label>
           <select id="uploadTypeSelect" onchange="onTypeChanged()">
             <option value="audio">Аудиозапись (MP3, M4A, AAC, WAV)</option>
             <option value="pdf">Документ (PDF)</option>
           </select>
         </div>
         <div class="field-box">
-          <label>Название записи / документа</label>
+          <label for="uploadTitleInput">Название записи / документа</label>
           <input type="text" id="uploadTitleInput" placeholder="Например: Учебник Aula 1" required>
         </div>
         <div class="field-box">
-          <label>Файл с устройства (AES-256 авто-дробление до 1-2 ГБ)</label>
+          <label for="uploadFileInput">Файл с устройства (AES-256 авто-дробление)</label>
           <input type="file" id="uploadFileInput" accept="audio/*,.mp3,.pdf">
         </div>
         <div class="field-box">
-          <label>Или ссылка на внешний файл (GitHub Releases, CDN)</label>
-          <input type="text" id="uploadUrlInput" placeholder="https://github.com/misha12333211-ctrl/Esp/releases/download/v.01/Aula.Internacional.Plus.1.1.pdf">
+          <label for="uploadUrlInput">Или ссылка на внешний файл (GitHub Releases, CDN)</label>
+          <input type="text" id="uploadUrlInput" placeholder="https://example.com/file.pdf">
         </div>
         <button type="submit" class="btn-submit" id="btnUploadSubmit">Сохранить в каталог</button>
       </form>
     </div>
 
-    <!-- Вкладка: Управление каталогом -->
     <div id="tabContentManage" class="hidden">
       <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 1rem;">
         Удаление файлов из каталога с обновлением манифеста:
@@ -855,15 +834,14 @@
       <div id="catalogManageList"></div>
     </div>
 
-    <!-- Вкладка: Пользователи -->
     <div id="tabContentUsers" class="hidden">
       <form onsubmit="onAddUserSubmit(event)" style="background: rgba(10, 10, 14, 0.8); padding: 1.1rem; border-radius: 18px; margin-bottom: 1.2rem;">
         <div class="field-box">
-          <label>Логин нового слушателя</label>
+          <label for="inputNewUser">Логин нового слушателя</label>
           <input type="text" id="inputNewUser" placeholder="ivan" required autocapitalize="none">
         </div>
         <div class="field-box">
-          <label>Пароль</label>
+          <label for="inputNewPass">Пароль</label>
           <input type="password" id="inputNewPass" placeholder="Пароль" required>
         </div>
         <button type="submit" class="btn-submit">Добавить пользователя</button>
@@ -871,31 +849,28 @@
       <div id="usersListRows"></div>
     </div>
 
-    <!-- Вкладка: Диагностика -->
     <div id="tabContentDiag" class="hidden">
       <button class="btn-submit btn-secondary" style="margin-bottom: 1rem;" onclick="runDiagScan()">Проверить доступность всех файлов (HTTP 200/404)</button>
       <div id="diagLogsOutput" style="font-size: 0.8rem; line-height: 1.6; word-break: break-all;"></div>
     </div>
 
-    <!-- Вкладка: GitHub Token -->
     <div id="tabContentSync" class="hidden">
       <div class="field-box">
-        <label>GitHub Personal Access Token (contents:write)</label>
-        <input type="password" id="inputGhToken" placeholder="ghp_xxxxxxxxxxxx">
+        <label for="inputGhToken">GitHub Personal Access Token (contents:write)</label>
+        <input type="password" id="inputGhToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
       </div>
       <div class="field-box">
-        <label>Репозиторий (Owner/Repo)</label>
+        <label for="inputGhRepo">Репозиторий (Owner/Repo)</label>
         <input type="text" id="inputGhRepo" value="misha12333211-ctrl/Esp">
       </div>
       <div class="field-box">
-        <label>Ветка</label>
+        <label for="inputGhBranch">Ветка</label>
         <input type="text" id="inputGhBranch" value="main">
       </div>
       <button class="btn-submit btn-secondary" onclick="exportVaultDirectly()">Скачать vault.json вручную</button>
     </div>
   </section>
 
-  <!-- 5. ПЕРВИЧНАЯ НАСТРОЙКА -->
   <section class="glass-card hidden" id="viewInit">
     <h2>Инициализация хранилища</h2>
     <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 1.1rem; line-height: 1.45;">
@@ -904,23 +879,21 @@
     <div class="system-banner" id="bannerInit"></div>
     <form onsubmit="onInitSubmit(event)">
       <div class="field-box">
-        <label>Логин Главного Администратора</label>
+        <label for="initAdminUser">Логин Главного Администратора</label>
         <input type="text" id="initAdminUser" value="admin" required autocapitalize="none">
       </div>
       <div class="field-box">
-        <label>Мастер-пароль (от 8 символов)</label>
-        <input type="password" id="initAdminPass" placeholder="Пароль" required>
+        <label for="initAdminPass">Мастер-пароль (от 8 символов)</label>
+        <input type="password" id="initAdminPass" placeholder="Пароль" minlength="8" required>
       </div>
       <button type="submit" class="btn-submit">Сгенерировать мастер-ключ</button>
     </form>
   </section>
 </div>
 
-<!-- Скрытый аудиоэлемент для Safari -->
 <audio id="hardwareAudio" playsinline preload="auto" class="hidden"></audio>
 
 <script>
-  // СОСТОЯНИЕ В RAM
   let state = {
     vaultData: null,
     vaultKey: null,
@@ -936,9 +909,8 @@
   };
 
   const hardwareAudio = document.getElementById('hardwareAudio');
-  const CHUNK_SIZE = 15 * 1024 * 1024; // 15 МБ
+  const CHUNK_SIZE = 15 * 1024 * 1024;
 
-  // БАЗОВЫЙ URL
   function getBaseRepoUrl() {
     let p = window.location.pathname;
     if (!p.endsWith('/')) {
@@ -952,7 +924,6 @@
     return window.location.origin + p;
   }
 
-  // САНИТИЗАЦИЯ СТРОК (XSS)
   function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -963,11 +934,21 @@
       .replace(/'/g, '&#39;');
   }
 
-  function cleanFilename(str) {
-    return str.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+  function transliterate(text) {
+    const map = {
+      'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z',
+      'и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r',
+      'с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch',
+      'ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
+    };
+    return String(text).toLowerCase().split('').map(c => map[c] || c).join('');
   }
 
-  // КРИПТОГРАФИЯ (AES-256-GCM + PBKDF2)
+  function cleanFilename(str) {
+    const normalized = transliterate(str).replace(/[^a-zA-Z0-9_\-\.]/g, '_').replace(/_+/g, '_');
+    return normalized || 'file';
+  }
+
   async function sha256(str) {
     const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str.trim().toLowerCase()));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -1007,13 +988,11 @@
     );
   }
 
-  // СТАРТ ПРИЛОЖЕНИЯ И ПОДДЕРЖКА ЖЕСТА «НАЗАД»
   window.addEventListener('DOMContentLoaded', async () => {
     initAudioEngineEvents();
     initScrubberEvents();
 
-    // Поддержка системного свайпа/кнопки Назад на телефонах
-    window.addEventListener('popstate', (e) => {
+    window.addEventListener('popstate', () => {
       const pdfModal = document.getElementById('pdfViewerModal');
       const adminView = document.getElementById('viewAdmin');
       if (!pdfModal.classList.contains('hidden')) {
@@ -1067,14 +1046,13 @@
 
   function showBanner(id, msg, type) {
     const el = document.getElementById(id);
-    el.innerHTML = msg;
+    el.textContent = msg;
     el.className = `system-banner ${type}`;
   }
 
-  // ВХОД В СИСТЕМУ
   async function onLoginSubmit(e) {
     e.preventDefault();
-    const user = document.getElementById('inputUser').value;
+    const user = document.getElementById('inputUser').value.trim();
     const pass = document.getElementById('inputPass').value;
     const btn = document.getElementById('btnLoginSubmit');
 
@@ -1083,7 +1061,7 @@
       showBanner('bannerLogin', 'Дешифрование мастер-ключа в памяти...', 'success');
 
       const uHash = await sha256(user);
-      const record = state.vaultData.users[uHash];
+      const record = state.vaultData && state.vaultData.users ? state.vaultData.users[uHash] : null;
       if (!record) throw new Error('Неверный логин или пароль.');
 
       const userKey = await deriveUserKey(pass, new Uint8Array(base64ToBuf(record.salt)));
@@ -1113,14 +1091,13 @@
 
       renderLibrary();
       showScreen('listener');
-    } catch (err) {
+    } catch (_) {
       showBanner('bannerLogin', 'Ошибка доступа: неверный пароль или поврежден ключ.', 'error');
     } finally {
       btn.disabled = false;
     }
   }
 
-  // ФИЛЬТРАЦИЯ И ОТРИСОВКА
   function setFilter(type, btn) {
     state.currentFilter = type;
     document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
@@ -1156,7 +1133,11 @@
       card.className = `item-card ${isActive ? 'is-active' : ''} ${isPlaying ? 'is-playing' : ''}`;
       card.onclick = () => {
         if (isAudio) {
-          playAudioItem(originalIndex);
+          if (state.activeAudioIndex === originalIndex && hardwareAudio.src) {
+            togglePlayback();
+          } else {
+            playAudioItem(originalIndex);
+          }
         } else {
           openPdfItem(originalIndex);
         }
@@ -1185,11 +1166,10 @@
     });
   }
 
-  // ЗАГРУЗКА БАЙТОВ (ЛОКАЛЬНЫХ ИЛИ ЧАНКОВ)
   async function fetchSingleBinary(filename, signal) {
     if (filename.startsWith('http://') || filename.startsWith('https://')) {
       const res = await fetch(filename, { cache: 'no-store', signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status} (${filename})`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const buf = await res.arrayBuffer();
       if (buf.byteLength < 16) throw new Error('Файл пуст');
       return buf;
@@ -1212,11 +1192,11 @@
           if (buf.byteLength < 16) throw new Error('Файл пуст');
           return buf;
         } else {
-          lastErr = `HTTP ${res.status} (${u})`;
+          lastErr = `HTTP ${res.status}`;
         }
       } catch (e) {
         if (e.name === 'AbortError') throw e;
-        lastErr = `${e.message} (${u})`;
+        lastErr = e.message;
       }
     }
     throw new Error(`Файл не найден. ${lastErr}`);
@@ -1262,7 +1242,6 @@
     state.activeAudioBlobUrl = null;
   }
 
-  // ВОСПРОИЗВЕДЕНИЕ АУДИО
   async function playAudioItem(idx) {
     const item = state.items[idx];
     if (!item) return;
@@ -1338,7 +1317,7 @@
       }
     } catch (err) {
       if (err.name === 'AbortError') return;
-      showBanner('bannerListener', `Ошибка трека «${escapeHtml(item.title)}»: ${err.message}`, 'error');
+      showBanner('bannerListener', `Ошибка трека «${item.title}»: ${err.message}`, 'error');
       statusEl.textContent = 'Сбой воспроизведения';
     }
   }
@@ -1407,6 +1386,7 @@
 
   function initScrubberEvents() {
     const scrubber = document.getElementById('dockScrubber');
+    const curTime = document.getElementById('labelCurrentTime');
     const resetScrub = () => {
       if (state.isScrubbing && hardwareAudio.duration) {
         hardwareAudio.currentTime = (scrubber.value / 100) * hardwareAudio.duration;
@@ -1414,14 +1394,18 @@
       state.isScrubbing = false;
     };
 
-    scrubber.addEventListener('input', () => { state.isScrubbing = true; });
+    scrubber.addEventListener('input', () => {
+      state.isScrubbing = true;
+      if (hardwareAudio.duration) {
+        curTime.textContent = formatDuration((scrubber.value / 100) * hardwareAudio.duration);
+      }
+    });
     scrubber.addEventListener('change', resetScrub);
     scrubber.addEventListener('touchend', resetScrub);
     scrubber.addEventListener('touchcancel', resetScrub);
     scrubber.addEventListener('mouseup', resetScrub);
   }
 
-  // ПРОСМОТРЩИК PDF: РАБОЧИЕ КНОПКИ И ОБХОД БЛОКИРОВОК
   async function openPdfItem(idx) {
     const item = state.items[idx];
     if (!item) return;
@@ -1440,7 +1424,6 @@
     const isUrl = item.filename && (item.filename.startsWith('http://') || item.filename.startsWith('https://'));
     const isPlainPdf = isUrl && !item.filename.toLowerCase().includes('.enc');
 
-    // Если это внешний PDF (GitHub Releases / Ссылка) — показываем нативную рабочую карточку
     if (isPlainPdf) {
       frame.classList.add('hidden');
       extCard.classList.remove('hidden');
@@ -1449,7 +1432,6 @@
       return;
     }
 
-    // Если это зашифрованный файл (.enc / части)
     extCard.classList.add('hidden');
     frame.classList.remove('hidden');
     title.textContent = `Загрузка: ${item.title}...`;
@@ -1483,14 +1465,12 @@
     }
   }
 
-  // ПРЯМОЕ ОТКРЫТИЕ В SAFARI / НОВОЙ ВКЛАДКЕ
   function openPdfInNewTab() {
     if (state.activePdfBlobUrl) {
-      window.open(state.activePdfBlobUrl, '_blank');
+      window.open(state.activePdfBlobUrl, '_blank', 'noopener,noreferrer');
     }
   }
 
-  // ПРЯМОЕ СКАЧИВАНИЕ ФАЙЛА
   function directDownloadFile() {
     if (state.activePdfBlobUrl) {
       const a = document.createElement('a');
@@ -1503,7 +1483,6 @@
     }
   }
 
-  // ЗАКРЫТИЕ PDF С ОЧИСТКОЙ ПАМЯТИ
   function closePdfViewer(goHistoryBack = true) {
     const modal = document.getElementById('pdfViewerModal');
     const frame = document.getElementById('pdfViewerFrame');
@@ -1519,7 +1498,6 @@
     }
   }
 
-  // АДМИНИСТРАТИВНЫЕ ФУНКЦИИ
   function switchAdminTab(t) {
     ['upload', 'manage', 'users', 'diag', 'sync'].forEach(name => {
       document.getElementById(`tabContent${capitalize(name)}`).classList.toggle('hidden', name !== t);
@@ -1532,6 +1510,7 @@
   function onTypeChanged() {
     const type = document.getElementById('uploadTypeSelect').value;
     const input = document.getElementById('uploadFileInput');
+    input.value = '';
     if (type === 'pdf') {
       input.accept = '.pdf,application/pdf';
     } else {
@@ -1539,7 +1518,6 @@
     }
   }
 
-  // ЗАГРУЗКА И ШИФРОВАНИЕ НОВОГО ФАЙЛА
   async function onUploadFileSubmit(e) {
     e.preventDefault();
     const type = document.getElementById('uploadTypeSelect').value;
@@ -1575,7 +1553,7 @@
           showBanner('bannerAdmin', 'Файл успешно добавлен в каталог и опубликован на GitHub!', 'success');
         } else {
           exportVaultDirectly();
-          showBanner('bannerAdmin', 'Файл добавлен. Обновленный vault.json скачан — замените его в корне репозитория на GitHub.', 'success');
+          showBanner('bannerAdmin', 'Файл добавлен. Обновленный vault.json скачан — замените его в репозитории.', 'success');
         }
 
         document.getElementById('uploadTitleInput').value = '';
@@ -1638,16 +1616,16 @@
           await githubUploadOrUpdate(repo, `tracks/${chunkData[i].filename}`, chunkData[i].buffer, `Add ${type} part ${i + 1}/${chunkData.length}: ${title}`);
         }
         await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), 'Update catalog manifest');
-        showBanner('bannerAdmin', chunkData.length > 1 ? `Файл разбит на ${chunkData.length} частей и успешно загружен в GitHub!` : 'Файл зашифрован и успешно опубликован на GitHub!', 'success');
+        showBanner('bannerAdmin', chunkData.length > 1 ? `Файл разбит на ${chunkData.length} частей и загружен в GitHub!` : 'Файл зашифрован и опубликован на GitHub!', 'success');
       } else {
         for (let i = 0; i < chunkData.length; i++) {
           downloadDirectBlob(new Blob([chunkData[i].buffer]), chunkData[i].filename);
-          if (chunkData.length > 1) await new Promise(r => setTimeout(r, 350));
+          if (chunkData.length > 1) await new Promise(r => setTimeout(r, 400));
         }
         exportVaultDirectly();
         showBanner('bannerAdmin', chunkData.length > 1 ?
-          `Файл разбит на ${chunkData.length} частей. Все части и vault.json скачаны. Поместите части в папку tracks/, а vault.json в корень репозитория Esp.` :
-          `Зашифрованный ${baseFilename} и обновленный vault.json скачаны. Поместите ${baseFilename} в папку tracks/, а vault.json в корень.`, 'success');
+          `Файл разбит на ${chunkData.length} частей. Все части и vault.json скачаны. Поместите части в tracks/, а vault.json в корень.` :
+          `Зашифрованный файл и vault.json скачаны. Поместите файл в tracks/, а vault.json в корень.`, 'success');
       }
 
       document.getElementById('uploadTitleInput').value = '';
@@ -1660,7 +1638,6 @@
     }
   }
 
-  // УДАЛЕНИЕ ИЗ КАТАЛОГА
   function renderManageCatalog() {
     const box = document.getElementById('catalogManageList');
     box.innerHTML = '';
@@ -1689,7 +1666,7 @@
     const item = state.items[index];
     if (!item) return;
 
-    if (!confirm(`Вы действительно хотите удалить «${item.title}» из каталога?`)) return;
+    if (!confirm(`Удалить «${item.title}» из каталога?`)) return;
 
     try {
       showBanner('bannerAdmin', 'Обновление хранилища...', 'success');
@@ -1717,10 +1694,10 @@
           await githubDeleteFile(repo, `tracks/${item.filename}`);
         }
         await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), `Delete: ${item.title}`);
-        showBanner('bannerAdmin', `Запись «${escapeHtml(item.title)}» удалена из каталога и с GitHub!`, 'success');
+        showBanner('bannerAdmin', `Запись «${item.title}» удалена из каталога и репозитория!`, 'success');
       } else {
         exportVaultDirectly();
-        showBanner('bannerAdmin', `Запись «${escapeHtml(item.title)}» удалена. Обновленный vault.json скачан — замените его в репозитории на GitHub.`, 'success');
+        showBanner('bannerAdmin', `Запись «${item.title}» удалена. Обновленный vault.json скачан.`, 'success');
       }
     } catch (err) {
       showBanner('bannerAdmin', 'Ошибка удаления: ' + err.message, 'error');
@@ -1737,7 +1714,6 @@
     state.vaultData.catalog = { iv: bufToBase64(catIv), data: bufToBase64(encCatalog) };
   }
 
-  // ПОЛЬЗОВАТЕЛИ
   async function onAddUserSubmit(e) {
     e.preventDefault();
     const user = document.getElementById('inputNewUser').value.trim();
@@ -1765,10 +1741,10 @@
       const repo = document.getElementById('inputGhRepo').value.trim();
       if (token && repo) {
         await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), `Add user: ${user}`);
-        showBanner('bannerAdmin', `Пользователь ${escapeHtml(user)} добавлен и синхронизирован с GitHub!`, 'success');
+        showBanner('bannerAdmin', `Пользователь ${user} добавлен и синхронизирован с GitHub!`, 'success');
       } else {
         exportVaultDirectly();
-        showBanner('bannerAdmin', `Пользователь ${escapeHtml(user)} создан. Скачанный vault.json замените в репозитории GitHub.`, 'success');
+        showBanner('bannerAdmin', `Пользователь ${user} создан. Обновленный vault.json скачан.`, 'success');
       }
 
       document.getElementById('inputNewUser').value = '';
@@ -1787,10 +1763,10 @@
       div.style.cssText = 'background: rgba(10, 10, 14, 0.7); padding: 0.85rem 1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; margin-bottom: 0.5rem;';
       div.innerHTML = `
         <div>
-          <span style="font-family: monospace;">${hash.substring(0, 10)}...</span>
-          <span style="color: var(--accent); margin-left: 0.5rem; font-weight: 600;">[${u.role}]</span>
+          <span style="font-family: monospace;">${escapeHtml(hash.substring(0, 10))}...</span>
+          <span style="color: var(--accent); margin-left: 0.5rem; font-weight: 600;">[${escapeHtml(u.role)}]</span>
         </div>
-        ${u.role !== 'admin' ? `<button class="ios-chip" style="color: var(--danger);" onclick="revokeUserAccess('${hash}')">Удалить</button>` : '<span style="font-size: 0.75rem; color: var(--text-sub);">Администратор</span>'}
+        ${u.role !== 'admin' ? `<button class="ios-chip" style="color: var(--danger);" onclick="revokeUserAccess('${escapeHtml(hash)}')">Удалить</button>` : '<span style="font-size: 0.75rem; color: var(--text-sub);">Администратор</span>'}
       `;
       box.appendChild(div);
     });
@@ -1805,35 +1781,40 @@
     }
   }
 
-  // ДИАГНОСТИКА
   async function runDiagScan() {
     const out = document.getElementById('diagLogsOutput');
-    out.innerHTML = 'Проверка доступности файлов...<br>';
+    out.textContent = '';
+    const addLog = (text) => {
+      const line = document.createElement('div');
+      line.textContent = text;
+      out.appendChild(line);
+    };
+
+    addLog('Проверка доступности файлов...');
     const base = getBaseRepoUrl();
 
     try {
       const v = await fetch(new URL('vault.json', base).href + `?_cb=${Date.now()}`, { cache: 'no-store' });
-      out.innerHTML += `vault.json: ${v.ok ? '✅ Доступен (200 OK)' : '❌ Ошибка ' + v.status}<br>`;
+      addLog(`vault.json: ${v.ok ? '✅ Доступен (200 OK)' : '❌ Ошибка ' + v.status}`);
     } catch (_) {
-      out.innerHTML += `vault.json: ❌ Недоступен<br>`;
+      addLog('vault.json: ❌ Недоступен');
     }
 
     for (const it of state.items) {
       if (it.filename && (it.filename.startsWith('http://') || it.filename.startsWith('https://'))) {
-        out.innerHTML += `<b>${escapeHtml(it.title)}</b>: 🌐 Внешняя прямая ссылка<br>`;
+        addLog(`${it.title}: 🌐 Внешняя прямая ссылка`);
         continue;
       }
       try {
         await fetchEncryptedData(it);
         const chunkInfo = (it.chunks && it.chunks.length > 1) ? ` (${it.chunks.length} частей)` : '';
-        out.innerHTML += `<b>${escapeHtml(it.title)}</b>${chunkInfo}: ✅ Файл доступен и читается<br>`;
+        addLog(`${it.title}${chunkInfo}: ✅ Файл доступен и читается`);
       } catch (e) {
-        out.innerHTML += `<b>${escapeHtml(it.title)}</b>: ❌ Ошибка загрузки: ${e.message}<br>`;
+        addLog(`${it.title}: ❌ Ошибка загрузки: ${e.message}`);
       }
     }
   }
 
-  // GITHUB REST API
   async function githubUploadOrUpdate(repo, path, contentBuffer, message) {
     const token = document.getElementById('inputGhToken').value.trim();
     const branch = document.getElementById('inputGhBranch').value.trim() || 'main';
@@ -1841,7 +1822,7 @@
 
     let sha = null;
     try {
-      const g = await fetch(`${url}?ref=${branch}`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const g = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers: { 'Authorization': `Bearer ${token}` } });
       if (g.ok) {
         const j = await g.json();
         sha = j.sha;
@@ -1871,7 +1852,7 @@
     const url = `https://api.github.com/repos/${repo}/contents/${path}`;
 
     try {
-      const g = await fetch(`${url}?ref=${branch}`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const g = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers: { 'Authorization': `Bearer ${token}` } });
       if (!g.ok) return;
       const j = await g.json();
 
@@ -1887,7 +1868,6 @@
     } catch (_) {}
   }
 
-  // ИНИЦИАЛИЗАЦИЯ
   async function onInitSubmit(e) {
     e.preventDefault();
     const user = document.getElementById('initAdminUser').value.trim();
@@ -1926,7 +1906,7 @@
       };
 
       exportVaultDirectly();
-      showBanner('bannerInit', 'vault.json сгенерирован и скачан! Загрузите его в корень репозитория Esp и обновите страницу.', 'success');
+      showBanner('bannerInit', 'vault.json сгенерирован! Загрузите его в корень репозитория и обновите страницу.', 'success');
     } catch (err) {
       showBanner('bannerInit', 'Ошибка: ' + err.message, 'error');
     }
