@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   <title>CyberVault — Безопасное хранилище</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob: data: https://api.github.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; frame-src 'self' blob: data:; connect-src 'self' blob: https://api.github.com https:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob: data: https://api.github.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; frame-src 'self' blob: data:; connect-src 'self' blob: data: https://api.github.com https:;">
 
   <style>
     :root {
@@ -957,7 +957,7 @@
 <audio id="hardwareAudio" playsinline preload="auto" class="hidden"></audio>
 
 <script>
-  const PBKDF2_ITERATIONS = 310000;
+  const DEFAULT_ITERATIONS = 250000;
   const CHUNK_SIZE = 15 * 1024 * 1024;
 
   const state = {
@@ -986,7 +986,7 @@
       el.style.opacity = '0';
       el.style.transform = 'translateY(-10px)';
       setTimeout(() => el.remove(), 250);
-    }, 3800);
+    }, 4200);
   }
 
   function getBaseRepoUrl() {
@@ -1041,7 +1041,7 @@
     return bytes.buffer;
   }
 
-  async function deriveUserKey(password, saltUint8) {
+  async function deriveUserKey(password, saltUint8, iterations = DEFAULT_ITERATIONS) {
     const keyMaterial = await crypto.subtle.importKey(
       "raw",
       new TextEncoder().encode(password),
@@ -1050,7 +1050,7 @@
       ["deriveKey"]
     );
     return await crypto.subtle.deriveKey(
-      { name: "PBKDF2", salt: saltUint8, iterations: PBKDF2_ITERATIONS, hash: "SHA-256" },
+      { name: "PBKDF2", salt: saltUint8, iterations: iterations, hash: "SHA-256" },
       keyMaterial,
       { name: "AES-GCM", length: 256 },
       true,
@@ -1204,14 +1204,32 @@
       btn.disabled = true;
       const uHash = await sha256(user);
       const record = state.vaultData && state.vaultData.users ? state.vaultData.users[uHash] : null;
-      if (!record) throw new Error('Неверный логин или пароль.');
+      if (!record) {
+        throw new Error(`Пользователь «${user}» не найден в vault.json`);
+      }
 
-      const userKey = await deriveUserKey(pass, new Uint8Array(base64ToBuf(record.salt)));
-      const rawVaultKey = await crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: new Uint8Array(base64ToBuf(record.iv)) },
-        userKey,
-        base64ToBuf(record.encKey)
-      );
+      const salt = new Uint8Array(base64ToBuf(record.salt));
+      const iv = new Uint8Array(base64ToBuf(record.iv));
+      const encKeyBuf = base64ToBuf(record.encKey);
+
+      let rawVaultKey = null;
+      const itersList = record.iterations ? [record.iterations] : [250000, 310000];
+
+      for (const iters of itersList) {
+        try {
+          const userKey = await deriveUserKey(pass, salt, iters);
+          rawVaultKey = await crypto.subtle.decrypt(
+            { name: "AES-GCM", iv: iv },
+            userKey,
+            encKeyBuf
+          );
+          if (rawVaultKey) break;
+        } catch (_) {}
+      }
+
+      if (!rawVaultKey) {
+        throw new Error('Неверный пароль.');
+      }
 
       state.vaultKey = await crypto.subtle.importKey(
         "raw",
@@ -1234,8 +1252,8 @@
       renderLibrary();
       showScreen('listener');
       toast('Хранилище успешно расшифровано');
-    } catch (_) {
-      toast('Ошибка доступа: неверные данные или ключ поврежден', 'error');
+    } catch (err) {
+      toast(err.message || 'Ошибка доступа', 'error');
     } finally {
       btn.disabled = false;
     }
@@ -1852,7 +1870,7 @@
     try {
       const uHash = await sha256(user);
       const salt = crypto.getRandomValues(new Uint8Array(16));
-      const userKey = await deriveUserKey(pass, salt);
+      const userKey = await deriveUserKey(pass, salt, DEFAULT_ITERATIONS);
 
       const rawVaultKey = await crypto.subtle.exportKey("raw", state.vaultKey);
       const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -1862,7 +1880,8 @@
         role: "user",
         salt: bufToBase64(salt),
         iv: bufToBase64(iv),
-        encKey: bufToBase64(encKey)
+        encKey: bufToBase64(encKey),
+        iterations: DEFAULT_ITERATIONS
       };
 
       renderUsersManage();
@@ -2012,7 +2031,7 @@
       const rawVaultKey = await crypto.subtle.exportKey("raw", vaultKey);
 
       const salt = crypto.getRandomValues(new Uint8Array(16));
-      const userKey = await deriveUserKey(pass, salt);
+      const userKey = await deriveUserKey(pass, salt, DEFAULT_ITERATIONS);
       const iv = crypto.getRandomValues(new Uint8Array(12));
       const encVaultKey = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, userKey, rawVaultKey);
 
@@ -2030,7 +2049,8 @@
             role: "admin",
             salt: bufToBase64(salt),
             iv: bufToBase64(iv),
-            encKey: bufToBase64(encVaultKey)
+            encKey: bufToBase64(encVaultKey),
+            iterations: DEFAULT_ITERATIONS
           }
         },
         catalog: {
