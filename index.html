@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   <title>CyberVault — Безопасное хранилище</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' blob: data: https://api.github.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' blob: data: https:;">
 
   <style>
     :root {
@@ -172,7 +172,7 @@
       color: var(--text);
       padding: 0.95rem 1.1rem;
       border-radius: 16px;
-      font-size: 16px; /* Исключает автозум Safari */
+      font-size: 16px;
       outline: none;
       transition: all 0.2s;
       user-select: text;
@@ -748,8 +748,12 @@
           <input type="text" id="uploadTitleInput" placeholder="Например: Секретный отчет №1" required>
         </div>
         <div class="field-box">
-          <label>Файл для шифрования</label>
-          <input type="file" id="uploadFileInput" accept="audio/*,.mp3,.pdf" required>
+          <label>Файл любого размера (авто-дробление на части)</label>
+          <input type="file" id="uploadFileInput" accept="audio/*,.mp3,.pdf">
+        </div>
+        <div class="field-box">
+          <label>Или прямая ссылка на зашифрованный файл (.enc / GitHub Releases)</label>
+          <input type="text" id="uploadUrlInput" placeholder="https://github.com/.../download/v1.0/file.enc">
         </div>
         <button type="submit" class="btn-submit" id="btnUploadSubmit">Зашифровать AES-256 и добавить</button>
       </form>
@@ -828,7 +832,7 @@
 <audio id="hardwareAudio" playsinline preload="auto" class="hidden"></audio>
 
 <script>
-  // СОСТОЯНИЕ В ОПЕРАТИВНОЙ ПАМЯТИ
+  // ОПЕРАТИВНОЕ СОСТОЯНИЕ В RAM
   let state = {
     vaultData: null,
     vaultKey: null,
@@ -844,6 +848,7 @@
   };
 
   const hardwareAudio = document.getElementById('hardwareAudio');
+  const CHUNK_SIZE = 15 * 1024 * 1024; // 15 МБ — гарантированно безопасно под любые лимиты GitHub
 
   // БАЗОВЫЙ URL РЕПОЗИТОРИЯ
   function getBaseRepoUrl() {
@@ -1080,8 +1085,16 @@
     });
   }
 
-  // ЗАГРУЗКА ЗАШИФРОВАННЫХ БАЙТОВ (с отменой предыдущих)
-  async function fetchEncryptedData(filename, signal) {
+  // ЗАГРУЗКА ОДИНОЧНОГО ФАЙЛА / ЧАНКА С СЕРВЕРА
+  async function fetchSingleBinary(filename, signal) {
+    if (filename.startsWith('http://') || filename.startsWith('https://')) {
+      const res = await fetch(filename, { cache: 'no-store', signal });
+      if (!res.ok) throw new Error(`HTTP ${res.status} (${filename})`);
+      const buf = await res.arrayBuffer();
+      if (buf.byteLength < 16) throw new Error('Файл пуст');
+      return buf;
+    }
+
     const base = getBaseRepoUrl();
     const tryUrls = [
       new URL(`tracks/${filename}`, base).href,
@@ -1109,6 +1122,39 @@
     throw new Error(`Файл не найден. ${lastErr}`);
   }
 
+  // УМНЫЙ ЗАГРУЗЧИК (ПОДДЕРЖКА ЧАНКОВ ЛЮБОГО РАЗМЕРА И ПРЯМЫХ ССЫЛОК)
+  async function fetchEncryptedData(target, signal, onProgress) {
+    const item = (typeof target === 'object' && target !== null) ? target : { filename: target };
+
+    // Если файл разбит на части (chunks)
+    if (Array.isArray(item.chunks) && item.chunks.length > 1) {
+      const buffers = [];
+      let totalLength = 0;
+
+      for (let i = 0; i < item.chunks.length; i++) {
+        if (onProgress) {
+          onProgress(i + 1, item.chunks.length);
+        }
+        const chunkBuf = await fetchSingleBinary(item.chunks[i], signal);
+        buffers.push(chunkBuf);
+        totalLength += chunkBuf.byteLength;
+      }
+
+      // Склеиваем все части в единый буфер в оперативной памяти
+      const assembled = new Uint8Array(totalLength);
+      let offset = 0;
+      for (const b of buffers) {
+        assembled.set(new Uint8Array(b), offset);
+        offset += b.byteLength;
+      }
+      return assembled.buffer;
+    }
+
+    // Если файл одиночный
+    const fname = (Array.isArray(item.chunks) && item.chunks.length === 1) ? item.chunks[0] : item.filename;
+    return await fetchSingleBinary(fname, signal);
+  }
+
   // ПОЛНАЯ ОЧИСТКА АУДИОАППАРАТУРЫ (Решает зависание в Safari на 5 треке)
   function hardResetAudioEngine() {
     try {
@@ -1128,7 +1174,6 @@
     const item = state.items[idx];
     if (!item) return;
 
-    // Прерываем предыдущие незавершенные сетевые загрузки
     if (state.activeAbortController) {
       state.activeAbortController.abort();
     }
@@ -1153,7 +1198,9 @@
     statusEl.textContent = 'Загрузка и дешифрование...';
 
     try {
-      const buffer = await fetchEncryptedData(item.filename, state.activeAbortController.signal);
+      const buffer = await fetchEncryptedData(item, state.activeAbortController.signal, (cur, total) => {
+        statusEl.textContent = `Загрузка части ${cur} из ${total}...`;
+      });
       if (currentSession !== state.loadingSessionId) return;
 
       const bytes = new Uint8Array(buffer);
@@ -1168,7 +1215,6 @@
 
       if (currentSession !== state.loadingSessionId) return;
 
-      // Строго audio/mpeg для iOS Safari
       const blob = new Blob([decrypted], { type: 'audio/mpeg' });
       state.activeAudioBlobUrl = URL.createObjectURL(blob);
 
@@ -1182,7 +1228,6 @@
         });
       }
 
-      // iOS MediaSession Lockscreen API
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: item.title,
@@ -1254,7 +1299,6 @@
     hardwareAudio.addEventListener('ended', () => {
       playSvg.classList.remove('hidden');
       pauseSvg.classList.add('hidden');
-      // Поиск следующего аудиотрека
       let nextIdx = state.activeAudioIndex + 1;
       while (nextIdx < state.items.length && (state.items[nextIdx].type || 'audio') !== 'audio') {
         nextIdx++;
@@ -1291,7 +1335,9 @@
     modal.classList.remove('hidden');
 
     try {
-      const buffer = await fetchEncryptedData(item.filename);
+      const buffer = await fetchEncryptedData(item, undefined, (cur, total) => {
+        title.textContent = `Загрузка части ${cur} из ${total}: ${item.title}...`;
+      });
       const bytes = new Uint8Array(buffer);
       const iv = bytes.slice(0, 12);
       const ciphertext = bytes.slice(12);
@@ -1348,17 +1394,53 @@
     }
   }
 
-  // ЗАГРУЗКА И ШИФРОВАНИЕ НОВОГО ФАЙЛА
+  // ЗАГРУЗКА И ШИФРОВАНИЕ НОВОГО ФАЙЛА (С АВТО-ДРОБЛЕНИЕМ)
   async function onUploadFileSubmit(e) {
     e.preventDefault();
     const type = document.getElementById('uploadTypeSelect').value;
     const title = document.getElementById('uploadTitleInput').value.trim();
     const file = document.getElementById('uploadFileInput').files[0];
+    const directUrl = document.getElementById('uploadUrlInput').value.trim();
     const btn = document.getElementById('btnUploadSubmit');
+
+    if (!file && !directUrl) {
+      showBanner('bannerAdmin', 'Выберите файл для шифрования или введите прямую ссылку.', 'error');
+      return;
+    }
 
     try {
       btn.disabled = true;
-      showBanner('bannerAdmin', 'Шифрование файла AES-256-GCM...', 'success');
+
+      // Вариант 1: Указана прямая ссылка на зашифрованный файл (например из GitHub Releases)
+      if (!file && directUrl) {
+        state.items.push({
+          id: `ext_${Date.now()}`,
+          filename: directUrl,
+          title: title,
+          type: type,
+          size: 'Внешний файл',
+          date: new Date().toLocaleDateString('ru-RU')
+        });
+
+        await saveCatalogState();
+
+        const token = document.getElementById('inputGhToken').value.trim();
+        const repo = document.getElementById('inputGhRepo').value.trim();
+        if (token && repo) {
+          await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), 'Update catalog manifest');
+          showBanner('bannerAdmin', 'Файл успешно добавлен в каталог и опубликован на GitHub!', 'success');
+        } else {
+          exportVaultDirectly();
+          showBanner('bannerAdmin', 'Файл добавлен. Обновленный vault.json скачан — загрузите его в корень репозитория.', 'success');
+        }
+
+        document.getElementById('uploadTitleInput').value = '';
+        document.getElementById('uploadUrlInput').value = '';
+        return;
+      }
+
+      // Вариант 2: Загрузка локального файла с авто-разбиением на части
+      showBanner('bannerAdmin', 'Шифрование файла AES-256-GCM в памяти RAM...', 'success');
 
       const fileBuffer = await file.arrayBuffer();
       const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -1372,39 +1454,67 @@
       combined.set(iv, 0);
       combined.set(new Uint8Array(encrypted), 12);
 
-      const cleanBaseName = cleanFilename(file.name.replace(/\.[^/.]+$/, ""));
-      const filename = `${type}_${Date.now()}_${cleanBaseName}.enc`;
+      const cleanBaseName = cleanFilename(file.name.replace(/\.[^/.]+$/, "")) || 'file';
+      const baseFilename = `${type}_${Date.now()}_${cleanBaseName}.enc`;
+
+      let chunkList = [];
+      let chunkData = [];
+
+      // Проверяем, нужно ли разбивать на части
+      if (combined.byteLength <= CHUNK_SIZE) {
+        chunkList = [baseFilename];
+        chunkData = [{ filename: baseFilename, buffer: combined.buffer }];
+      } else {
+        const numChunks = Math.ceil(combined.byteLength / CHUNK_SIZE);
+        for (let i = 0; i < numChunks; i++) {
+          const start = i * CHUNK_SIZE;
+          const end = Math.min(start + CHUNK_SIZE, combined.byteLength);
+          const chunkBuf = combined.slice(start, end).buffer;
+          const chunkName = `${baseFilename}.part${i}`;
+          chunkList.push(chunkName);
+          chunkData.push({ filename: chunkName, buffer: chunkBuf });
+        }
+      }
 
       state.items.push({
-        id: filename,
-        filename: filename,
+        id: baseFilename,
+        filename: baseFilename,
+        chunks: chunkList.length > 1 ? chunkList : undefined,
         title: title,
         type: type,
         size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
         date: new Date().toLocaleDateString('ru-RU')
       });
 
-      // Перешифровываем манифест
       await saveCatalogState();
 
-      // GitHub API или ручной экспорт
       const token = document.getElementById('inputGhToken').value.trim();
       const repo = document.getElementById('inputGhRepo').value.trim();
       if (token && repo) {
-        showBanner('bannerAdmin', 'Публикация в GitHub API...', 'success');
-        await githubUploadOrUpdate(repo, `tracks/${filename}`, combined.buffer, `Add ${type}: ${title}`);
+        for (let i = 0; i < chunkData.length; i++) {
+          showBanner('bannerAdmin', `Загрузка в GitHub: часть ${i + 1} из ${chunkData.length}...`, 'success');
+          await githubUploadOrUpdate(repo, `tracks/${chunkData[i].filename}`, chunkData[i].buffer, `Add ${type} part ${i + 1}/${chunkData.length}: ${title}`);
+        }
         await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), 'Update catalog manifest');
-        showBanner('bannerAdmin', 'Файл зашифрован и успешно опубликован на GitHub!', 'success');
+        showBanner('bannerAdmin', chunkData.length > 1 ? `Файл разбит на ${chunkData.length} частей и успешно загружен в GitHub!` : 'Файл зашифрован и успешно опубликован на GitHub!', 'success');
       } else {
-        downloadDirectBlob(new Blob([combined]), filename);
+        for (let i = 0; i < chunkData.length; i++) {
+          downloadDirectBlob(new Blob([chunkData[i].buffer]), chunkData[i].filename);
+          if (chunkData.length > 1) {
+            await new Promise(r => setTimeout(r, 350));
+          }
+        }
         exportVaultDirectly();
-        showBanner('bannerAdmin', `Зашифрованный ${filename} и обновленный vault.json скачаны. Поместите ${filename} в папку tracks/, а vault.json в корень.`, 'success');
+        showBanner('bannerAdmin', chunkData.length > 1 ?
+          `Файл разбит на ${chunkData.length} частей (по <15 МБ). Все части и vault.json скачаны. Поместите части в папку tracks/, а vault.json в корень репозитория Esp.` :
+          `Зашифрованный ${baseFilename} и обновленный vault.json скачаны. Поместите ${baseFilename} в папку tracks/, а vault.json в корень.`, 'success');
       }
 
       document.getElementById('uploadTitleInput').value = '';
       document.getElementById('uploadFileInput').value = '';
+      document.getElementById('uploadUrlInput').value = '';
     } catch (err) {
-      showBanner('bannerAdmin', 'Ошибка шифрования: ' + err.message, 'error');
+      showBanner('bannerAdmin', 'Ошибка: ' + err.message, 'error');
     } finally {
       btn.disabled = false;
     }
@@ -1423,10 +1533,11 @@
     state.items.forEach((item, index) => {
       const div = document.createElement('div');
       div.className = 'catalog-manage-item';
+      const partsInfo = (item.chunks && item.chunks.length > 1) ? ` (${item.chunks.length} частей)` : '';
       div.innerHTML = `
         <div style="flex: 1; min-width: 0;">
           <div style="font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(item.title)}</div>
-          <div style="font-size: 0.75rem; color: var(--text-sub);">${item.type === 'pdf' ? 'PDF' : 'Аудио'} • ${escapeHtml(item.filename)}</div>
+          <div style="font-size: 0.75rem; color: var(--text-sub);">${item.type === 'pdf' ? 'PDF' : 'Аудио'} • ${escapeHtml(item.size || '')}${partsInfo}</div>
         </div>
         <button class="ios-chip" style="color: var(--danger); border-color: rgba(255, 69, 58, 0.4);" onclick="deleteItemFromCatalog(${index})">Удалить</button>
       `;
@@ -1443,7 +1554,6 @@
     try {
       showBanner('bannerAdmin', 'Обновление хранилища...', 'success');
 
-      // Если удаляется текущий играющий трек
       if (state.activeAudioIndex === index) {
         hardResetAudioEngine();
         document.getElementById('customDock').classList.add('hidden');
@@ -1456,11 +1566,16 @@
       renderManageCatalog();
       renderLibrary();
 
-      // Удаление через GitHub API при наличии токена
       const token = document.getElementById('inputGhToken').value.trim();
       const repo = document.getElementById('inputGhRepo').value.trim();
       if (token && repo) {
-        await githubDeleteFile(repo, `tracks/${item.filename}`);
+        if (Array.isArray(item.chunks) && item.chunks.length > 0) {
+          for (const chunkName of item.chunks) {
+            await githubDeleteFile(repo, `tracks/${chunkName}`);
+          }
+        } else if (!item.filename.startsWith('http://') && !item.filename.startsWith('https://')) {
+          await githubDeleteFile(repo, `tracks/${item.filename}`);
+        }
         await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), `Delete: ${item.title}`);
         showBanner('bannerAdmin', `Запись «${escapeHtml(item.title)}» удалена из каталога и с GitHub!`, 'success');
       } else {
@@ -1566,10 +1681,11 @@
 
     for (const it of state.items) {
       try {
-        await fetchEncryptedData(it.filename);
-        out.innerHTML += `<b>${escapeHtml(it.title)}</b> (${it.filename}): ✅ Файл найден на сервере<br>`;
+        await fetchEncryptedData(it);
+        const chunkInfo = (it.chunks && it.chunks.length > 1) ? ` (${it.chunks.length} частей)` : '';
+        out.innerHTML += `<b>${escapeHtml(it.title)}</b>${chunkInfo}: ✅ Файл доступен и читается<br>`;
       } catch (e) {
-        out.innerHTML += `<b>${escapeHtml(it.title)}</b> (${it.filename}): ❌ 404 Не найден в репозитории!<br>`;
+        out.innerHTML += `<b>${escapeHtml(it.title)}</b>: ❌ Ошибка загрузки: ${e.message}<br>`;
       }
     }
   }
