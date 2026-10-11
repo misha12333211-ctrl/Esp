@@ -11,6 +11,13 @@
       "salt": "OqHt8dWRMO1wPNCVYuu2dA==",
       "iv": "Evs3LBpB8ZR9nZSB",
       "encKey": "jguoZTiZvkfJ7HORxdd4olsWTSp6gekTyLQCV2PnUKPIQK7EQHy08WEK/D1aXKZ3"
+    },
+    "fb9cec76bdd2b23d5f921fb0cce836e8b3fe4c82fadd7b3972110c62b88d100c": {
+      "role": "user",
+      "salt": "Pnm0UkL22u+NeirjXBKsrA==",
+      "iv": "TaDyANlUWRJKunsZ",
+      "encKey": "1vB3P2fIwMs4B9WCZstsX8F9wmZZl9d7t+vrCYVJAHzKmBblfZnDa9DhSY020wxw",
+      "iterations": 250000
     }
   },
   "catalog": {
