@@ -1,0 +1,20 @@
+{
+  "users": {
+    "5016fe997f995f4129fdfbcdb0ccda78a2e0eb043aca874e33f443fe16788096": {
+      "role": "admin",
+      "salt": "GmcHo+V8pMtwCdjMGtwjoQ==",
+      "iv": "IDIE8lKq+XXcZkKl",
+      "encKey": "ayP7XyX2hK33Lr5+EGZixLwcbk2PtY7d2ijrHHJ3Rd4pOEOYR1O7iQSyec5Oyybl"
+    },
+    "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3": {
+      "role": "user",
+      "salt": "OqHt8dWRMO1wPNCVYuu2dA==",
+      "iv": "Evs3LBpB8ZR9nZSB",
+      "encKey": "jguoZTiZvkfJ7HORxdd4olsWTSp6gekTyLQCV2PnUKPIQK7EQHy08WEK/D1aXKZ3"
+    }
+  },
+  "catalog": {
+    "iv": "qdd/za7Woiag8k8g",
+    "data": "IZ9ddXRHocyi4sCoARTfrd4+AwKS1OHWTzjfk7W14OVoBJnt3Y5ll9p6ClZSBQjTF+oPg/xajhPZGgEQU2T2ed5gk3iA/LWbzy31gfbCVV1FBOUy6eKelAjbSjTR2G4eEQV8mZA0p9zTzsaHswzqpFA3MOSXXzYcRve2mldfied3JbgVnn9/yhEKXHi9hHAUeufmyWvnXPU/Wr8tp95Zhos1l0/nBzgzA0j8pg210pkvbbfS24qMiYofu6Dm2EoNh9rFHtY0MtLJHEfMCrnq9P2KXX+Qe+Z2B0yXuHEPx3XCSvr1p5eIpxCZcpCe0TAIfIrKZLUP7j5DgrPqgJUQ+IGDsjCzNGT/6l9zvahWxb3Y1H1LpiT6IJsqnB4jfffIicEOVEAW1g1+ZTYLTnGuhONYCc14564wvkNFeYCPRsKcrCq1Gdb+h+zj1LmVAHJ+MzrgJf3ZhgnfEKKhXmiTH9M96/g="
+  }
+}
