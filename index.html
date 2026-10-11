@@ -2,243 +2,541 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberVault — Безопасное аудиохранилище AES-256</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>CyberVault — Личное аудиохранилище</title>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' blob: data: https://api.github.com;">
+
   <style>
     :root {
-      --bg: #090d16;
-      --card-bg: #111827;
-      --card-hover: #162033;
-      --border: #1f293d;
-      --border-focus: #10b981;
+      --bg: #000000;
+      --surface: #121216;
+      --surface-card: #181820;
+      --surface-active: #22222e;
+      --border: rgba(255, 255, 255, 0.08);
       --accent: #10b981;
       --accent-glow: rgba(16, 185, 129, 0.2);
       --danger: #ef4444;
-      --warning: #f59e0b;
-      --text: #f9fafb;
-      --muted: #9ca3af;
+      --text: #f3f4f6;
+      --text-sub: #9ca3af;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem; }
-    .container { width: 100%; max-width: 860px; }
-
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
-    .logo { display: flex; align-items: center; gap: 0.75rem; }
-    .shield-icon { width: 32px; height: 32px; fill: var(--accent); }
-    h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
-    .badge { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
-
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); margin-bottom: 1.5rem; }
-    .card h2 { font-size: 1.2rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-    
-    .field { margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; }
-    label { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-    input[type="text"], input[type="password"] {
-      width: 100%; background: #070a12; border: 1px solid var(--border); color: var(--text); padding: 0.8rem 1rem; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border-color 0.2s;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font);
+      -webkit-tap-highlight-color: transparent;
     }
-    input:focus { border-color: var(--accent); }
 
-    .btn { background: var(--accent); color: #000; border: none; padding: 0.8rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
-    .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-    .btn-secondary { background: #1f293d; color: var(--text); }
-    .btn-secondary:hover { background: #28354f; }
-    .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.4); }
-    .btn-danger:hover { background: var(--danger); color: #fff; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    .status-box { padding: 0.8rem 1rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1rem; display: none; }
-    .status-box.error { display: block; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); }
-    .status-box.success { display: block; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--accent); }
-
-    /* Playlist */
-    .track-list { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; }
-    .track-item {
-      display: flex; justify-content: space-between; align-items: center; background: #0c121e; border: 1px solid var(--border); padding: 0.9rem 1.2rem; border-radius: 10px; cursor: pointer; transition: all 0.2s;
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding-top: max(12px, env(safe-area-inset-top));
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+      overflow-x: hidden;
+      user-select: none;
     }
-    .track-item:hover { background: var(--card-hover); border-color: rgba(16, 185, 129, 0.4); }
-    .track-item.active { border-color: var(--accent); background: rgba(16, 185, 129, 0.08); }
-    .track-info { display: flex; flex-direction: column; gap: 0.2rem; }
-    .track-title { font-weight: 600; font-size: 1rem; }
-    .track-meta { font-size: 0.75rem; color: var(--muted); }
 
-    /* Player */
-    .player-dock { background: #070b13; border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; margin-top: 1.5rem; }
-    .now-playing { font-size: 0.9rem; font-weight: 600; color: var(--accent); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem; }
-    audio { width: 100%; border-radius: 8px; }
+    .app-container {
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
 
-    /* Admin Tabs */
-    .admin-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-    .tab-btn { background: none; border: none; color: var(--muted); padding: 0.5rem 1rem; font-weight: 600; cursor: pointer; border-radius: 6px; }
-    .tab-btn.active { color: var(--accent); background: rgba(16, 185, 129, 0.1); }
-    
-    .table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
-    .table th, .table td { text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
-    .table th { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; }
+    /* Навбар */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      margin-bottom: 1rem;
+    }
 
-    .hidden { display: none !important; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-icon {
+      width: 24px;
+      height: 24px;
+      fill: var(--accent);
+    }
+
+    .brand-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .header-btns {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .chip-btn {
+      background: var(--surface);
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip-btn:active {
+      transform: scale(0.96);
+      background: var(--surface-active);
+    }
+
+    .chip-admin {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: var(--accent);
+    }
+
+    /* Карточки */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.4rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      margin-bottom: 1rem;
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    /* Формы (16px шрифт для исключения зума в Safari) */
+    .field {
+      margin-bottom: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="file"] {
+      width: 100%;
+      background: #09090d;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      user-select: text;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 0.95rem;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:active {
+      background: var(--surface-active);
+    }
+
+    .status-alert {
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .status-alert.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .status-alert.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #86efac;
+    }
+
+    /* СПИСОК ТРЕКОВ ДЛЯ СЛУШАТЕЛЯ */
+    .tracks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      padding: 0 0.2rem;
+    }
+
+    .tracks-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 6rem; /* Запас под мини-плеер */
+    }
+
+    .track-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+
+    .track-row:active {
+      background: var(--surface-active);
+      transform: scale(0.985);
+    }
+
+    .track-row.playing {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .track-icon {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
+      background: var(--surface-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+
+    .track-row.playing .track-icon {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .track-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .track-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-info {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-top: 0.2rem;
+    }
+
+    /* ПЛЕЕР В СТИЛЕ IOS (FLOATING DOCK) */
+    .ios-dock {
+      position: fixed;
+      left: 1rem;
+      right: 1rem;
+      bottom: max(16px, env(safe-area-inset-bottom));
+      max-width: 620px;
+      margin: 0 auto;
+      background: rgba(22, 22, 28, 0.92);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.85rem 1.1rem;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+      z-index: 100;
+    }
+
+    .dock-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 0.5rem;
+    }
+
+    audio {
+      width: 100%;
+      height: 36px;
+      outline: none;
+    }
+
+    /* ВКЛАДКИ АДМИНКИ */
+    .admin-nav {
+      display: flex;
+      gap: 0.35rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1.2rem;
+      overflow-x: auto;
+    }
+
+    .admin-tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      padding: 0.45rem 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .admin-tab-btn.active {
+      color: var(--accent);
+      background: rgba(16, 185, 129, 0.12);
+    }
+
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
+  <!-- ШАПКА -->
   <header>
-    <div class="logo">
-      <svg class="shield-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>
-      <div>
-        <h1>CyberVault</h1>
-        <p style="font-size: 0.75rem; color: var(--muted);">AES-256-GCM Zero-Knowledge Audio</p>
-      </div>
+    <div class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>
+      <div class="brand-name">CyberVault</div>
     </div>
-    <div id="headerActions" class="hidden">
-      <span class="badge" id="userRoleBadge">User</span>
-      <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="logout()">Выйти</button>
-    </div>
+    <div class="header-btns" id="headerButtons"></div>
   </header>
 
-  <!-- 1. ЭКРАН АВТОРИЗАЦИИ -->
-  <section class="card" id="loginView">
-    <h2>Вход в защищенное хранилище</h2>
-    <div class="status-box" id="loginStatus"></div>
+  <!-- 1. ЭКРАН ВХОДА -->
+  <section class="card" id="loginScreen">
+    <h2>Вход в аудиосистему</h2>
+    <div class="status-alert" id="loginAlert"></div>
     <form onsubmit="handleLogin(event)">
       <div class="field">
-        <label>Логин</label>
-        <input type="text" id="loginUser" placeholder="Ваш логин..." required autocomplete="username">
+        <label>Имя пользователя</label>
+        <input type="text" id="loginUser" placeholder="Ваш логин" required autocomplete="username" autocapitalize="none">
       </div>
       <div class="field">
-        <label>Пароль</label>
-        <input type="password" id="loginPass" placeholder="Секретный пароль..." required autocomplete="current-password">
+        <label>Пароль доступа</label>
+        <input type="password" id="loginPass" placeholder="Пароль" required autocomplete="current-password">
       </div>
-      <button type="submit" class="btn" style="width: 100%;" id="loginSubmitBtn">Открыть доступ к записям</button>
-    </form>
-    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.8rem; color: var(--muted);">
-      Шифрование: PBKDF2 (250 000 итераций) + AES-GCM-256.<br>Пароли не передаются и проверяются локально в ОЗУ.
-    </div>
-  </section>
-
-  <!-- 2. ЭКРАН ИНИЦИАЛИЗАЦИИ ХРАНИЛИЩА (Если vault.json еще нет) -->
-  <section class="card hidden" id="initView">
-    <h2>Первоначальная настройка Vault</h2>
-    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 1.2rem;">
-      Конфигурация хранилища (vault.json) не обнаружена. Задайте учетные данные Главного Администратора для инициализации мастер-ключа.
-    </p>
-    <div class="status-box" id="initStatus"></div>
-    <form onsubmit="handleInitVault(event)">
-      <div class="field">
-        <label>Логин Администратора</label>
-        <input type="text" id="initAdminUser" value="admin" required>
-      </div>
-      <div class="field">
-        <label>Мастер-пароль Администратора</label>
-        <input type="password" id="initAdminPass" placeholder="Минимум 8 символов..." required>
-      </div>
-      <button type="submit" class="btn" style="width: 100%;">Сгенерировать защищенное хранилище</button>
+      <button type="submit" class="btn" id="loginSubmitBtn">Открыть каталог</button>
     </form>
   </section>
 
-  <!-- 3. ОСНОВНОЙ ЭКРАН (ПЛЕЕР И СПИСОК АУДИОЗАПИСЕЙ) -->
-  <section class="card hidden" id="mainView">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h2>Ваши расшифрованные аудиозаписи</h2>
-      <button class="btn btn-secondary hidden" id="adminPanelBtn" onclick="toggleAdminPanel()">Панель Администратора</button>
+  <!-- 2. ИЗОЛИРОВАННЫЙ ЭКРАН СЛУШАТЕЛЯ (ЧИСТЫЙ МЕДИАПЛЕЕР) -->
+  <section class="hidden" id="listenerScreen">
+    <div class="status-alert" id="listenerAlert"></div>
+    <div class="tracks-header">
+      <span class="tracks-title">Ваша защищенная медиатека</span>
+      <span style="font-size: 0.8rem; color: var(--text-sub);" id="trackCountLabel">0 треков</span>
     </div>
 
-    <div class="status-box" id="mainStatus"></div>
-    <div id="trackList" class="track-list">
-      <!-- Список генерируется динамически -->
-    </div>
+    <div class="track-list" id="trackListContainer"></div>
 
-    <div class="player-dock hidden" id="playerDock">
-      <div class="now-playing" id="nowPlayingText">Воспроизведение: -</div>
-      <audio id="audioPlayer" controls></audio>
+    <!-- ДОК-ПЛЕЕР -->
+    <div class="ios-dock hidden" id="iosPlayerDock">
+      <div class="dock-title" id="nowPlayingText">Выберите аудиозапись</div>
+      <audio id="audioEl" controls playsinline preload="auto"></audio>
     </div>
   </section>
 
-  <!-- 4. ПАНЕЛЬ АДМИНИСТРАТОРА -->
-  <section class="card hidden" id="adminView">
+  <!-- 3. ПАНЕЛЬ АДМИНИСТРАТОРА (ДОСТУПНА ТОЛЬКО РОЛИ ADMIN) -->
+  <section class="card hidden" id="adminScreen">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-      <h2>Управление Хранилищем (Admin)</h2>
-      <button class="btn btn-secondary" onclick="toggleAdminPanel()">← К плееру</button>
+      <h2>Управление Хранилищем</h2>
+      <button class="chip-btn" onclick="openView('listener')">← К плееру</button>
     </div>
 
     <div class="admin-nav">
-      <button class="tab-btn active" id="tabUploadBtn" onclick="switchAdminTab('upload')">Загрузить MP3</button>
-      <button class="tab-btn" id="tabUsersBtn" onclick="switchAdminTab('users')">Пользователи</button>
-      <button class="tab-btn" id="tabSyncBtn" onclick="switchAdminTab('sync')">GitHub Синхронизация</button>
+      <button class="admin-tab-btn active" id="tabUploadBtn" onclick="switchAdminTab('upload')">Загрузка MP3</button>
+      <button class="admin-tab-btn" id="tabUsersBtn" onclick="switchAdminTab('users')">Пользователи</button>
+      <button class="admin-tab-btn" id="tabDiagBtn" onclick="switchAdminTab('diag')">Диагностика 404</button>
+      <button class="admin-tab-btn" id="tabSyncBtn" onclick="switchAdminTab('sync')">GitHub</button>
     </div>
 
-    <div class="status-box" id="adminStatus"></div>
+    <div class="status-alert" id="adminAlert"></div>
 
-    <!-- Вкладка: Загрузка аудио -->
-    <div id="adminTabUpload">
+    <!-- Вкладка: Загрузить трек -->
+    <div id="tabUploadContent">
       <form onsubmit="handleUploadTrack(event)">
         <div class="field">
-          <label>Название трека</label>
-          <input type="text" id="trackTitleInput" placeholder="Например: Секретная лекция #1" required>
+          <label>Название записи</label>
+          <input type="text" id="trackTitleInput" placeholder="Например: Аудиозапись 1" required>
         </div>
         <div class="field">
-          <label>Исходный MP3 файл</label>
+          <label>MP3 Аудиофайл</label>
           <input type="file" id="trackFileInput" accept="audio/mp3,audio/*" required>
         </div>
-        <button type="submit" class="btn" id="uploadTrackBtn">Зашифровать и добавить в каталог</button>
+        <button type="submit" class="btn" id="uploadTrackBtn">Зашифровать AES-256 и сохранить</button>
       </form>
     </div>
 
-    <!-- Вкладка: Пользователи -->
-    <div id="adminTabUsers" class="hidden">
-      <form onsubmit="handleAddUser(event)" style="margin-bottom: 1.5rem; background: #070b13; padding: 1rem; border-radius: 8px;">
-        <h3 style="font-size: 0.95rem; margin-bottom: 0.8rem;">Добавить нового слушателя</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 120px; gap: 0.6rem;">
-          <input type="text" id="newUsername" placeholder="Логин" required>
-          <input type="password" id="newUserPass" placeholder="Пароль" required>
-          <button type="submit" class="btn">Создать</button>
+    <!-- Вкладка: Управление пользователями -->
+    <div id="tabUsersContent" class="hidden">
+      <form onsubmit="handleAddUser(event)" style="background: #09090d; padding: 1rem; border-radius: 14px; margin-bottom: 1rem;">
+        <div class="field">
+          <label>Логин нового слушателя</label>
+          <input type="text" id="newUserName" placeholder="Логин" required autocapitalize="none">
         </div>
+        <div class="field">
+          <label>Пароль</label>
+          <input type="password" id="newUserPass" placeholder="Пароль" required>
+        </div>
+        <button type="submit" class="btn">Выдать доступ</button>
       </form>
-      <table class="table">
-        <thead>
-          <tr><th>Хэш логина (SHA-256)</th><th>Роль</th><th>Действие</th></tr>
-        </thead>
-        <tbody id="usersTableBody"></tbody>
-      </table>
+      <div id="userListRows" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+    </div>
+
+    <!-- Вкладка: Диагностика файлов (проверка 404 ошибок) -->
+    <div id="tabDiagContent" class="hidden">
+      <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 0.8rem;">
+        Проверка доступности всех зашифрованных файлов по их реальным ссылкам в репозитории:
+      </p>
+      <button class="btn btn-secondary" style="margin-bottom: 1rem;" onclick="runDiagnostics()">Запустить сканирование файлов</button>
+      <div id="diagLogs" style="font-size: 0.8rem; line-height: 1.6; word-break: break-all;"></div>
     </div>
 
     <!-- Вкладка: Синхронизация с GitHub -->
-    <div id="adminTabSync" class="hidden">
+    <div id="tabSyncContent" class="hidden">
       <div class="field">
-        <label>GitHub Personal Access Token (Только с правом repo/contents)</label>
-        <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+        <label>GitHub Personal Access Token (с правами contents:write)</label>
+        <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
       </div>
-      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.6rem;">
-        <div class="field">
-          <label>Репозиторий (Owner/Repo)</label>
-          <input type="text" id="ghRepo" placeholder="например: ivan/secure-music">
-        </div>
-        <div class="field">
-          <label>Ветка</label>
-          <input type="text" id="ghBranch" value="main">
-        </div>
+      <div class="field">
+        <label>Репозиторий (Owner/Repo)</label>
+        <input type="text" id="ghRepo" value="misha12333211-ctrl/Esp">
       </div>
-      <p style="font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem;">
-        Токен сохраняется исключительно в текущей сессии вкладки. Он позволяет публиковать новые треки прямо из браузера без ручной возни с Git.
-      </p>
+      <div class="field">
+        <label>Ветка</label>
+        <input type="text" id="ghBranch" value="main">
+      </div>
       <button class="btn btn-secondary" onclick="exportVaultFile()">Скачать vault.json вручную</button>
     </div>
+  </section>
+
+  <!-- 4. ПЕРВИЧНАЯ НАСТРОЙКА (Если хранилище новое) -->
+  <section class="card hidden" id="initScreen">
+    <h2>Создание нового хранилища</h2>
+    <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 1rem;">
+      Файл vault.json не обнаружен. Задайте логин и пароль Администратора для генерации мастер-ключа шифрования.
+    </p>
+    <div class="status-alert" id="initAlert"></div>
+    <form onsubmit="handleInitVault(event)">
+      <div class="field">
+        <label>Логин Главного Администратора</label>
+        <input type="text" id="initAdminUser" value="admin" required autocapitalize="none">
+      </div>
+      <div class="field">
+        <label>Мастер-пароль Администратора</label>
+        <input type="password" id="initAdminPass" placeholder="От 8 символов..." required>
+      </div>
+      <button type="submit" class="btn">Инициализировать хранилище</button>
+    </form>
   </section>
 </div>
 
 <script>
-  // СОСТОЯНИЕ СИСТЕМЫ В ОПЕРАТИВНОЙ ПАМЯТИ
+  // СОСТОЯНИЕ В ОПЕРАТИВНОЙ ПАМЯТИ
   let state = {
     vaultData: null,
-    vaultKey: null,      // CryptoKey (AES-GCM-256)
-    currentUser: null,   // { username, role, hash }
-    tracks: [],          // Расшифрованный список треков
-    audioBlobUrl: null   // Текущий поток в памяти
+    vaultKey: null,
+    currentUser: null,
+    tracks: [],
+    currentAudioUrl: null,
+    activeTrackIndex: -1
   };
 
-  // --- КРИПТОГРАФИЧЕСКИЕ ПРИМИТИВЫ (Web Crypto API) ---
+  // ВЫЧИСЛЕНИЕ АБСОЛЮТНОГО БАЗОВОГО URL ДЛЯ https://misha12333211-ctrl.github.io/Esp/
+  function getBaseRepoUrl() {
+    let path = window.location.pathname;
+    if (!path.endsWith('/')) {
+      const lastSlash = path.lastIndexOf('/');
+      if (path.substring(lastSlash).includes('.')) {
+        path = path.substring(0, lastSlash + 1);
+      } else {
+        path = path + '/';
+      }
+    }
+    return window.location.origin + path;
+  }
 
+  // --- КРИПТОГРАФИЧЕСКИЕ ПРИМИТИВЫ (WEB CRYPTO API) ---
   async function sha256(str) {
     const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str.trim().toLowerCase()));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -247,10 +545,8 @@
   function bufToBase64(buf) {
     let binary = '';
     const bytes = new Uint8Array(buf);
-    const len = bytes.byteLength;
-    const chunkSize = 0x8000;
-    for (let i = 0; i < len; i += chunkSize) {
-      binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + chunkSize, len)));
+    for (let i = 0; i < bytes.byteLength; i += 0x8000) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + 0x8000, bytes.byteLength)));
     }
     return btoa(binary);
   }
@@ -279,59 +575,395 @@
     );
   }
 
-  // --- ИНИЦИАЛИЗАЦИЯ И ЗАГРУЗКА ---
-
+  // --- СТАРТ ПРИЛОЖЕНИЯ ---
   window.addEventListener('DOMContentLoaded', async () => {
     try {
-      const res = await fetch('vault.json', { cache: 'no-store' });
+      const vaultUrl = new URL('vault.json', getBaseRepoUrl()).href + `?_cb=${Date.now()}`;
+      const res = await fetch(vaultUrl, { cache: 'no-store' });
       if (!res.ok) throw new Error('Vault not found');
       state.vaultData = await res.json();
-      showView('loginView');
-    } catch (e) {
-      // Файл vault.json не найден — предлагаем инициализацию
-      showView('initView');
+      openView('login');
+    } catch (_) {
+      openView('init');
     }
   });
 
-  function showView(viewId) {
-    ['loginView', 'initView', 'mainView', 'adminView'].forEach(id => {
-      document.getElementById(id).classList.toggle('hidden', id !== viewId);
+  function openView(view) {
+    document.getElementById('loginScreen').classList.toggle('hidden', view !== 'login');
+    document.getElementById('listenerScreen').classList.toggle('hidden', view !== 'listener');
+    document.getElementById('adminScreen').classList.toggle('hidden', view !== 'admin');
+    document.getElementById('initScreen').classList.toggle('hidden', view !== 'init');
+    updateHeaderUI();
+  }
+
+  function updateHeaderUI() {
+    const box = document.getElementById('headerButtons');
+    box.innerHTML = '';
+
+    if (!state.currentUser) return;
+
+    // ТОЛЬКО ЕСЛИ АДМИНИСТРАТОР — показываем кнопку админки
+    if (state.currentUser.role === 'admin') {
+      const adminBtn = document.createElement('button');
+      adminBtn.className = 'chip-btn chip-admin';
+      adminBtn.textContent = '⚙️ Управление';
+      adminBtn.onclick = () => openView('admin');
+      box.appendChild(adminBtn);
+    }
+
+    const logoutBtn = document.createElement('button');
+    logoutBtn.className = 'chip-btn';
+    logoutBtn.textContent = 'Выйти';
+    logoutBtn.onclick = logout;
+    box.appendChild(logoutBtn);
+  }
+
+  function showAlert(id, msg, type) {
+    const el = document.getElementById(id);
+    el.innerHTML = msg;
+    el.className = `status-alert ${type}`;
+  }
+
+  // --- ВХОД ПОЛЬЗОВАТЕЛЯ ---
+  async function handleLogin(e) {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value;
+    const pass = document.getElementById('loginPass').value;
+    const btn = document.getElementById('loginSubmitBtn');
+
+    try {
+      btn.disabled = true;
+      showAlert('loginAlert', 'Расшифровка ключей сессии...', 'success');
+
+      const uHash = await sha256(user);
+      const record = state.vaultData.users[uHash];
+      if (!record) throw new Error('Неверный логин или пароль.');
+
+      // Расшифровываем мастер-ключ
+      const userKey = await deriveUserKey(pass, new Uint8Array(base64ToBuf(record.salt)));
+      const rawVaultKey = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: new Uint8Array(base64ToBuf(record.iv)) },
+        userKey,
+        base64ToBuf(record.encKey)
+      );
+
+      state.vaultKey = await crypto.subtle.importKey(
+        "raw",
+        rawVaultKey,
+        { name: "AES-GCM", length: 256 },
+        true,
+        ["encrypt", "decrypt"]
+      );
+
+      state.currentUser = { username: user, role: record.role, hash: uHash };
+
+      // Расшифровываем список треков
+      const catIv = new Uint8Array(base64ToBuf(state.vaultData.catalog.iv));
+      const decCatalog = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: catIv },
+        state.vaultKey,
+        base64ToBuf(state.vaultData.catalog.data)
+      );
+      state.tracks = JSON.parse(new TextDecoder().decode(decCatalog));
+
+      renderTrackList();
+      openView('listener');
+    } catch (err) {
+      showAlert('loginAlert', 'Ошибка входа: неверные учетные данные.', 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // --- ПЛЕЕР И ВОСПРОИЗВЕДЕНИЕ ---
+  function renderTrackList() {
+    const container = document.getElementById('trackListContainer');
+    container.innerHTML = '';
+    document.getElementById('trackCountLabel').textContent = `${state.tracks.length} треков`;
+
+    if (state.tracks.length === 0) {
+      container.innerHTML = '<div style="color: var(--text-sub); text-align: center; padding: 2.5rem;">В медиатеке пока нет аудиозаписей.</div>';
+      return;
+    }
+
+    state.tracks.forEach((track, idx) => {
+      const row = document.createElement('div');
+      row.className = `track-row ${state.activeTrackIndex === idx ? 'playing' : ''}`;
+      row.onclick = () => playAudioTrack(idx);
+
+      row.innerHTML = `
+        <div class="track-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="track-meta">
+          <div class="track-name">${escapeHtml(track.title)}</div>
+          <div class="track-info">${track.date || ''} • ${track.size || ''}</div>
+        </div>
+      `;
+      container.appendChild(row);
     });
   }
 
-  function showStatus(elemId, msg, type) {
-    const el = document.getElementById(elemId);
-    el.textContent = msg;
-    el.className = `status-box ${type}`;
+  // УМНЫЙ ПОИСК ФАЙЛА (tracks/файл.enc И файл.enc в корне)
+  async function downloadBinary(filename) {
+    const base = getBaseRepoUrl();
+    const urlsToTry = [
+      new URL(`tracks/${filename}`, base).href,
+      new URL(filename, base).href,
+      new URL(`tracks/${encodeURIComponent(filename)}`, base).href,
+      new URL(encodeURIComponent(filename), base).href
+    ];
+
+    let lastStatus = '';
+    for (const rawUrl of [...new Set(urlsToTry)]) {
+      const testUrl = rawUrl + `?_cb=${Date.now()}`;
+      try {
+        const res = await fetch(testUrl, { cache: 'no-store' });
+        if (res.ok) {
+          const buf = await res.arrayBuffer();
+          if (buf.byteLength < 16) throw new Error('Файл пуст или поврежден');
+          return buf;
+        } else {
+          lastStatus = `HTTP ${res.status} по адресу: ${rawUrl}`;
+        }
+      } catch (err) {
+        lastStatus = `${err.message} (${rawUrl})`;
+      }
+    }
+
+    throw new Error(`Файл не найден на GitHub Pages.<br>Последняя ошибка: ${lastStatus}`);
   }
 
-  // --- СОЗДАНИЕ ПЕРВОГО ХРАНИЛИЩА ---
+  async function playAudioTrack(idx) {
+    const track = state.tracks[idx];
+    const audio = document.getElementById('audioEl');
+    const dock = document.getElementById('iosPlayerDock');
+    const titleText = document.getElementById('nowPlayingText');
 
+    state.activeTrackIndex = idx;
+    renderTrackList();
+
+    // 1. КРИТИЧНО ДЛЯ IPHONE SAFARI: разблокировка звука СИНХРОННО при клике!
+    audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+    audio.load();
+    audio.play().catch(() => {});
+
+    dock.classList.remove('hidden');
+    titleText.textContent = `Загрузка и дешифрование: ${track.title}...`;
+
+    try {
+      const buffer = await downloadBinary(track.filename);
+      const bytes = new Uint8Array(buffer);
+
+      const iv = bytes.slice(0, 12);
+      const ciphertext = bytes.slice(12);
+
+      const decrypted = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: iv },
+        state.vaultKey,
+        ciphertext
+      );
+
+      if (state.currentAudioUrl) URL.revokeObjectURL(state.currentAudioUrl);
+
+      // КРИТИЧНО ДЛЯ IOS: строго audio/mpeg
+      const blob = new Blob([decrypted], { type: 'audio/mpeg' });
+      state.currentAudioUrl = URL.createObjectURL(blob);
+
+      audio.src = state.currentAudioUrl;
+      titleText.textContent = `▶ ${track.title}`;
+      await audio.play();
+
+      // Интеграция с экраном блокировки iPhone (MediaSession API)
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: track.title,
+          artist: 'CyberVault',
+          album: 'Зашифрованное хранилище'
+        });
+      }
+    } catch (err) {
+      showAlert('listenerAlert', `Ошибка воспроизведения трека «${escapeHtml(track.title)}»:<br>${err.message}`, 'error');
+      titleText.textContent = `Сбой воспроизведения`;
+    }
+  }
+
+  // --- АДМИНИСТРАТИВНЫЕ ФУНКЦИИ ---
+  function switchAdminTab(tab) {
+    ['upload', 'users', 'diag', 'sync'].forEach(t => {
+      document.getElementById(`tab${capitalize(t)}Content`).classList.toggle('hidden', t !== tab);
+      document.getElementById(`tab${capitalize(t)}Btn`).classList.toggle('active', t !== tab);
+    });
+    if (tab === 'users') renderUsersAdmin();
+  }
+
+  async function handleUploadTrack(e) {
+    e.preventDefault();
+    const title = document.getElementById('trackTitleInput').value;
+    const file = document.getElementById('trackFileInput').files[0];
+    const btn = document.getElementById('uploadTrackBtn');
+
+    try {
+      btn.disabled = true;
+      showAlert('adminAlert', 'Шифрование аудиофайла AES-256-GCM...', 'success');
+
+      const fileBuffer = await file.arrayBuffer();
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const encrypted = await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv: iv },
+        state.vaultKey,
+        fileBuffer
+      );
+
+      const combined = new Uint8Array(12 + encrypted.byteLength);
+      combined.set(iv, 0);
+      combined.set(new Uint8Array(encrypted), 12);
+
+      const filename = `track_${Date.now()}.enc`;
+
+      state.tracks.push({
+        id: filename,
+        filename: filename,
+        title: title,
+        size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
+        date: new Date().toLocaleDateString('ru-RU')
+      });
+
+      // Перешифровываем каталог
+      const catIv = crypto.getRandomValues(new Uint8Array(12));
+      const encCatalog = await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv: catIv },
+        state.vaultKey,
+        new TextEncoder().encode(JSON.stringify(state.tracks))
+      );
+      state.vaultData.catalog = { iv: bufToBase64(catIv), data: bufToBase64(encCatalog) };
+
+      // Проверяем GitHub токен для автозагрузки
+      const token = document.getElementById('ghToken').value;
+      const repo = document.getElementById('ghRepo').value;
+      if (token && repo) {
+        showAlert('adminAlert', 'Отправка файлов в репозиторий через GitHub API...', 'success');
+        await githubUpload(repo, `tracks/${filename}`, combined.buffer, `Add audio: ${title}`);
+        await githubUpload(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), 'Update catalog');
+        showAlert('adminAlert', 'Успешно опубликовано в GitHub!', 'success');
+      } else {
+        downloadBlob(new Blob([combined]), filename);
+        exportVaultFile();
+        showAlert('adminAlert', `Файлы ${filename} и vault.json скачаны. Положите ${filename} в папку tracks/ (или в корень), а vault.json в корень репозитория Esp.`, 'success');
+      }
+
+      document.getElementById('trackTitleInput').value = '';
+      document.getElementById('trackFileInput').value = '';
+    } catch (err) {
+      showAlert('adminAlert', 'Ошибка: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function handleAddUser(e) {
+    e.preventDefault();
+    const user = document.getElementById('newUserName').value;
+    const pass = document.getElementById('newUserPass').value;
+
+    try {
+      const uHash = await sha256(user);
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const userKey = await deriveUserKey(pass, salt);
+
+      const rawVaultKey = await crypto.subtle.exportKey("raw", state.vaultKey);
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const encKey = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, userKey, rawVaultKey);
+
+      state.vaultData.users[uHash] = {
+        role: "user",
+        salt: bufToBase64(salt),
+        iv: bufToBase64(iv),
+        encKey: bufToBase64(encKey)
+      };
+
+      renderUsersAdmin();
+      exportVaultFile();
+      showAlert('adminAlert', `Пользователь ${escapeHtml(user)} создан. Обновленный vault.json скачан — замените его в репозитории на GitHub.`, 'success');
+      document.getElementById('newUserName').value = '';
+      document.getElementById('newUserPass').value = '';
+    } catch (e) {
+      showAlert('adminAlert', 'Ошибка: ' + e.message, 'error');
+    }
+  }
+
+  function renderUsersAdmin() {
+    const box = document.getElementById('userListRows');
+    box.innerHTML = '';
+    Object.keys(state.vaultData.users).forEach(hash => {
+      const u = state.vaultData.users[hash];
+      const div = document.createElement('div');
+      div.style.cssText = 'background: #09090d; padding: 0.75rem 1rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;';
+      div.innerHTML = `
+        <div>
+          <span style="font-family: monospace;">${hash.substring(0, 10)}...</span>
+          <span style="color: var(--accent); margin-left: 0.5rem;">[${u.role}]</span>
+        </div>
+        ${u.role !== 'admin' ? `<button class="chip-btn" style="color: var(--danger);" onclick="deleteUser('${hash}')">Удалить</button>` : '<span style="font-size: 0.75rem; color: var(--text-sub);">Создатель</span>'}
+      `;
+      box.appendChild(div);
+    });
+  }
+
+  function deleteUser(hash) {
+    if (confirm('Отозвать доступ для этого пользователя?')) {
+      delete state.vaultData.users[hash];
+      renderUsersAdmin();
+      exportVaultFile();
+    }
+  }
+
+  // СКАНЕР ДИАГНОСТИКИ (ПРОВЕРКА НА 404 ПРЯМО НА САЙТЕ)
+  async function runDiagnostics() {
+    const logs = document.getElementById('diagLogs');
+    logs.innerHTML = 'Проверка связности с GitHub Pages...<br>';
+    const base = getBaseRepoUrl();
+
+    // 1. Проверяем vault.json
+    try {
+      const vRes = await fetch(new URL('vault.json', base).href + `?_cb=${Date.now()}`, { cache: 'no-store' });
+      logs.innerHTML += `vault.json: ${vRes.ok ? '✅ Доступен (200 OK)' : '❌ Ошибка ' + vRes.status}<br>`;
+    } catch (_) {
+      logs.innerHTML += `vault.json: ❌ Недоступен<br>`;
+    }
+
+    // 2. Проверяем каждый аудиофайл
+    if (state.tracks.length === 0) {
+      logs.innerHTML += 'В каталоге нет треков для проверки.<br>';
+      return;
+    }
+
+    for (const t of state.tracks) {
+      try {
+        await downloadBinary(t.filename);
+        logs.innerHTML += `<b>${escapeHtml(t.title)}</b> (${t.filename}): ✅ Файл доступен и читается<br>`;
+      } catch (e) {
+        logs.innerHTML += `<b>${escapeHtml(t.title)}</b> (${t.filename}): ❌ 404 Не найден в репозитории!<br>`;
+      }
+    }
+  }
+
+  // --- ИНИЦИАЛИЗАЦИЯ И УТИЛИТЫ ---
   async function handleInitVault(e) {
     e.preventDefault();
     const user = document.getElementById('initAdminUser').value;
     const pass = document.getElementById('initAdminPass').value;
 
-    if (pass.length < 8) {
-      showStatus('initStatus', 'Пароль должен содержать от 8 символов.', 'error');
-      return;
-    }
-
     try {
-      showStatus('initStatus', 'Генерация ключей AES-256...', 'success');
-      // 1. Создаем случайный мастер-ключ
       const vaultKey = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
       const rawVaultKey = await crypto.subtle.exportKey("raw", vaultKey);
 
-      // 2. Шифруем мастер-ключ паролем админа
       const salt = crypto.getRandomValues(new Uint8Array(16));
       const userKey = await deriveUserKey(pass, salt);
       const iv = crypto.getRandomValues(new Uint8Array(12));
       const encVaultKey = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, userKey, rawVaultKey);
 
       const userHash = await sha256(user);
-
-      // 3. Создаем пустой зашифрованный каталог треков
       const tracksIv = crypto.getRandomValues(new Uint8Array(12));
       const encTracks = await crypto.subtle.encrypt(
         { name: "AES-GCM", iv: tracksIv },
@@ -354,297 +986,21 @@
         }
       };
 
-      // Скачиваем файл vault.json
       exportVaultFile();
-      showStatus('initStatus', 'Готово! Файл vault.json скачан. Загрузите его в корень вашего репозитория GitHub и обновите страницу.', 'success');
+      showAlert('initAlert', 'Файл vault.json создан и скачан. Загрузите его в корень репозитория Esp и обновите страницу.', 'success');
     } catch (err) {
-      showStatus('initStatus', 'Ошибка: ' + err.message, 'error');
+      showAlert('initAlert', 'Ошибка: ' + err.message, 'error');
     }
   }
 
-  // --- ВХОД ПОЛЬЗОВАТЕЛЯ / ДЕШИФРОВАНИЕ ---
-
-  async function handleLogin(e) {
-    e.preventDefault();
-    const user = document.getElementById('loginUser').value;
-    const pass = document.getElementById('loginPass').value;
-    const btn = document.getElementById('loginSubmitBtn');
-
-    try {
-      btn.disabled = true;
-      showStatus('loginStatus', 'Проверка криптографического ключа...', 'success');
-
-      const uHash = await sha256(user);
-      const record = state.vaultData.users[uHash];
-
-      if (!record) {
-        throw new Error('Неверный логин или пароль.');
-      }
-
-      // Восстанавливаем Vault Key
-      const userKey = await deriveUserKey(pass, new Uint8Array(base64ToBuf(record.salt)));
-      const rawVaultKey = await crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: new Uint8Array(base64ToBuf(record.iv)) },
-        userKey,
-        base64ToBuf(record.encKey)
-      );
-
-      state.vaultKey = await crypto.subtle.importKey(
-        "raw",
-        rawVaultKey,
-        { name: "AES-GCM", length: 256 },
-        true,
-        ["encrypt", "decrypt"]
-      );
-
-      state.currentUser = { username: user, role: record.role, hash: uHash };
-
-      // Расшифровываем каталог аудиофайлов
-      const catIv = new Uint8Array(base64ToBuf(state.vaultData.catalog.iv));
-      const decCatalog = await crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: catIv },
-        state.vaultKey,
-        base64ToBuf(state.vaultData.catalog.data)
-      );
-      state.tracks = JSON.parse(new TextDecoder().decode(decCatalog));
-
-      // Настройка интерфейса
-      document.getElementById('headerActions').classList.remove('hidden');
-      document.getElementById('userRoleBadge').textContent = record.role.toUpperCase();
-      if (record.role === 'admin') {
-        document.getElementById('adminPanelBtn').classList.remove('hidden');
-      }
-
-      renderTrackList();
-      showView('mainView');
-    } catch (err) {
-      showStatus('loginStatus', 'Ошибка доступа: неверные учетные данные.', 'error');
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  // --- ПЛЕЕР И ВОСПРОИЗВЕДЕНИЕ ---
-
-  function renderTrackList() {
-    const list = document.getElementById('trackList');
-    list.innerHTML = '';
-
-    if (state.tracks.length === 0) {
-      list.innerHTML = '<div style="color: var(--muted); text-align: center; padding: 2rem;">Пока нет загруженных записей.</div>';
-      return;
-    }
-
-    state.tracks.forEach((track, idx) => {
-      const item = document.createElement('div');
-      item.className = 'track-item';
-      item.onclick = () => playTrack(idx);
-      item.innerHTML = `
-        <div class="track-info">
-          <div class="track-title">${escapeHtml(track.title)}</div>
-          <div class="track-meta">${track.date || ''} · ${track.size || ''}</div>
-        </div>
-        <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">▶ Играть</button>
-      `;
-      list.appendChild(item);
-    });
-  }
-
-  async function playTrack(idx) {
-    const track = state.tracks[idx];
-    const player = document.getElementById('audioPlayer');
-    const dock = document.getElementById('playerDock');
-    const statusText = document.getElementById('nowPlayingText');
-
-    try {
-      statusText.textContent = `Загрузка и дешифрование в RAM: ${track.title}...`;
-      dock.classList.remove('hidden');
-
-      // Скачиваем зашифрованный бинарник из папки tracks/
-      const res = await fetch(`tracks/${track.filename}`);
-      if (!res.ok) throw new Error(`Файл tracks/${track.filename} не найден в репозитории.`);
-
-      const encryptedBuffer = await res.arrayBuffer();
-      const bytes = new Uint8Array(encryptedBuffer);
-
-      // Первые 12 байт — IV, остальное — ciphertext
-      const iv = bytes.slice(0, 12);
-      const ciphertext = bytes.slice(12);
-
-      const decryptedAudio = await crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: iv },
-        state.vaultKey,
-        ciphertext
-      );
-
-      if (state.audioBlobUrl) URL.revokeObjectURL(state.audioBlobUrl);
-      const blob = new Blob([decryptedAudio], { type: "audio/mp3" });
-      state.audioBlobUrl = URL.createObjectURL(blob);
-
-      player.src = state.audioBlobUrl;
-      statusText.textContent = `Воспроизведение: ${track.title}`;
-      player.play();
-    } catch (e) {
-      alert("Ошибка воспроизведения: " + e.message);
-      statusText.textContent = `Ошибка: ${track.title}`;
-    }
-  }
-
-  // --- АДМИНИСТРАТИВНЫЕ ФУНКЦИИ ---
-
-  function toggleAdminPanel() {
-    const adminView = document.getElementById('adminView');
-    if (adminView.classList.contains('hidden')) {
-      showView('adminView');
-      renderUsersTable();
-    } else {
-      renderTrackList();
-      showView('mainView');
-    }
-  }
-
-  function switchAdminTab(tab) {
-    ['upload', 'users', 'sync'].forEach(t => {
-      document.getElementById(`adminTab${capitalize(t)}`).classList.toggle('hidden', t !== tab);
-      document.getElementById(`tab${capitalize(t)}Btn`).classList.toggle('active', t !== tab);
-    });
-  }
-
-  // Загрузка и шифрование MP3
-  async function handleUploadTrack(e) {
-    e.preventDefault();
-    const title = document.getElementById('trackTitleInput').value;
-    const file = document.getElementById('trackFileInput').files[0];
-    const btn = document.getElementById('uploadTrackBtn');
-
-    try {
-      btn.disabled = true;
-      showStatus('adminStatus', 'Шифрование аудиофайла AES-256-GCM...', 'success');
-
-      const fileBuffer = await file.arrayBuffer();
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const encrypted = await crypto.subtle.encrypt(
-        { name: "AES-GCM", iv: iv },
-        state.vaultKey,
-        fileBuffer
-      );
-
-      // Контейнер [12 байт IV] + [данные]
-      const combined = new Uint8Array(12 + encrypted.byteLength);
-      combined.set(iv, 0);
-      combined.set(new Uint8Array(encrypted), 12);
-
-      const filename = `track_${Date.now()}.enc`;
-
-      // Добавляем в каталог
-      state.tracks.push({
-        id: filename,
-        filename: filename,
-        title: title,
-        size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
-        date: new Date().toLocaleDateString()
-      });
-
-      // Перешифровываем каталог треков
-      const catIv = crypto.getRandomValues(new Uint8Array(12));
-      const encCatalog = await crypto.subtle.encrypt(
-        { name: "AES-GCM", iv: catIv },
-        state.vaultKey,
-        new TextEncoder().encode(JSON.stringify(state.tracks))
-      );
-      state.vaultData.catalog = { iv: bufToBase64(catIv), data: bufToBase64(encCatalog) };
-
-      // Пытаемся синхронизировать через GitHub API, если токен введен
-      const ghToken = document.getElementById('ghToken').value;
-      const ghRepo = document.getElementById('ghRepo').value;
-      if (ghToken && ghRepo) {
-        showStatus('adminStatus', 'Загрузка в GitHub через API...', 'success');
-        await githubUploadFile(ghRepo, `tracks/${filename}`, combined.buffer, `Add encrypted audio: ${title}`);
-        await githubUploadFile(ghRepo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), 'Update vault metadata');
-        showStatus('adminStatus', 'Успешно опубликовано на GitHub!', 'success');
-      } else {
-        // Ручной экспорт
-        downloadBlob(new Blob([combined]), filename);
-        exportVaultFile();
-        showStatus('adminStatus', `Зашифрованный ${filename} и vault.json скачаны. Поместите ${filename} в папку tracks/ репозитория, а vault.json в корень.`, 'success');
-      }
-
-      document.getElementById('trackTitleInput').value = '';
-      document.getElementById('trackFileInput').value = '';
-    } catch (err) {
-      showStatus('adminStatus', 'Ошибка: ' + err.message, 'error');
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  // Добавление нового пользователя
-  async function handleAddUser(e) {
-    e.preventDefault();
-    const username = document.getElementById('newUsername').value;
-    const pass = document.getElementById('newUserPass').value;
-
-    try {
-      const uHash = await sha256(username);
-      const salt = crypto.getRandomValues(new Uint8Array(16));
-      const userKey = await deriveUserKey(pass, salt);
-
-      const rawVaultKey = await crypto.subtle.exportKey("raw", state.vaultKey);
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const encKey = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, userKey, rawVaultKey);
-
-      state.vaultData.users[uHash] = {
-        role: "user",
-        salt: bufToBase64(salt),
-        iv: bufToBase64(iv),
-        encKey: bufToBase64(encKey)
-      };
-
-      renderUsersTable();
-      document.getElementById('newUsername').value = '';
-      document.getElementById('newUserPass').value = '';
-      showStatus('adminStatus', 'Пользователь добавлен! Не забудьте обновить vault.json на GitHub.', 'success');
-    } catch (err) {
-      showStatus('adminStatus', 'Ошибка: ' + err.message, 'error');
-    }
-  }
-
-  function renderUsersTable() {
-    const tbody = document.getElementById('usersTableBody');
-    tbody.innerHTML = '';
-    Object.keys(state.vaultData.users).forEach(hash => {
-      const u = state.vaultData.users[hash];
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td style="font-family: monospace; font-size: 0.8rem;">${hash.substring(0, 16)}...</td>
-        <td><span class="badge">${u.role}</span></td>
-        <td>
-          ${u.role !== 'admin' ? `<button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="deleteUser('${hash}')">Удалить</button>` : 'Главный'}
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  function deleteUser(hash) {
-    if (confirm('Отозвать доступ для этого пользователя?')) {
-      delete state.vaultData.users[hash];
-      renderUsersTable();
-      showStatus('adminStatus', 'Пользователь удален. Обновите vault.json на GitHub.', 'success');
-    }
-  }
-
-  // --- GITHUB REST API АВТОМАТИЗАЦИЯ ---
-
-  async function githubUploadFile(repo, path, contentBuffer, message) {
+  async function githubUpload(repo, path, contentBuffer, message) {
     const token = document.getElementById('ghToken').value;
     const branch = document.getElementById('ghBranch').value || 'main';
     const url = `https://api.github.com/repos/${repo}/contents/${path}`;
 
-    // Проверяем существующий sha (для перезаписи)
     let sha = null;
     try {
-      const getRes = await fetch(url + `?ref=${branch}`, {
+      const getRes = await fetch(`${url}?ref=${branch}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (getRes.ok) {
@@ -660,9 +1016,9 @@
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: message,
+        message,
         content: bufToBase64(contentBuffer),
-        branch: branch,
+        branch,
         ...(sha ? { sha } : {})
       })
     });
@@ -672,8 +1028,6 @@
       throw new Error(err.message || 'Ошибка GitHub API');
     }
   }
-
-  // --- УТИЛИТЫ ---
 
   function exportVaultFile() {
     const blob = new Blob([JSON.stringify(state.vaultData, null, 2)], { type: "application/json" });
@@ -689,19 +1043,19 @@
   }
 
   function logout() {
-    if (state.audioBlobUrl) URL.revokeObjectURL(state.audioBlobUrl);
+    if (state.currentAudioUrl) URL.revokeObjectURL(state.currentAudioUrl);
     state.vaultKey = null;
     state.currentUser = null;
     state.tracks = [];
-    document.getElementById('headerActions').classList.add('hidden');
-    document.getElementById('playerDock').classList.add('hidden');
-    showView('loginView');
+    state.activeTrackIndex = -1;
+    document.getElementById('iosPlayerDock').classList.add('hidden');
+    openView('login');
   }
 
   function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
   }
 
   function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
