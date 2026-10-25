@@ -5,25 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#090a0f">
-  <title>CyberVault — Безопасное хранилище</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob: data: https://api.github.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; object-src 'none'; frame-src 'self' blob: data:; worker-src 'self' blob: https://cdnjs.cloudflare.com; connect-src 'self' blob: data: https://api.github.com https:;">
+  <meta name="theme-color" content="#000000">
+  <title>CyberVault -- Безопасное хранилище</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob: data: https://api.github.com https://uploads.github.com https://objects.githubusercontent.com https://github.com https://cdnjs.cloudflare.com; credentials-src 'self' https://api.github.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; object-src 'none'; frame-src 'self' blob: data:; worker-src 'self' blob: https://cdnjs.cloudflare.com; connect-src 'self' blob: data: https://api.github.com https://uploads.github.com https://objects.githubusercontent.com https://github.com https:;">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
   <style>
     :root {
-      --bg: #090a0f;
-      --surface: rgba(18, 20, 29, 0.85);
-      --surface-card: rgba(24, 27, 40, 0.7);
-      --surface-active: rgba(35, 40, 60, 0.85);
-      --border: rgba(255, 255, 255, 0.08);
+      --bg: #000000;
+      --surface: rgba(18, 18, 24, 0.88);
+      --surface-card: rgba(26, 26, 36, 0.75);
+      --surface-active: rgba(40, 40, 56, 0.9);
+      --border: rgba(255, 255, 255, 0.1);
       --border-accent: rgba(16, 185, 129, 0.45);
       --accent: #10b981;
       --accent-glow: rgba(16, 185, 129, 0.25);
       --danger: #ff453a;
-      --text: #f3f4f6;
-      --text-sub: #94a3b8;
+      --text: #ffffff;
+      --text-sub: #9ca3af;
       --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     }
 
@@ -33,6 +33,7 @@
       padding: 0;
       font-family: var(--font);
       -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
     }
 
     body {
@@ -46,11 +47,7 @@
       padding-left: max(16px, env(safe-area-inset-left));
       padding-right: max(16px, env(safe-area-inset-right));
       overflow-x: hidden;
-    }
-
-    button, .filter-pill, .ios-chip, .item-card, .file-dropzone {
       user-select: none;
-      -webkit-user-select: none;
     }
 
     .app-shell {
@@ -66,35 +63,35 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.6rem 0.2rem 1.2rem 0.2rem;
+      padding: 0.5rem 0.2rem 1.2rem 0.2rem;
     }
 
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
 
     .brand-badge {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.28), rgba(16, 185, 129, 0.05));
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.05));
       border: 1px solid rgba(16, 185, 129, 0.35);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
     }
 
     .brand-icon {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       fill: var(--accent);
     }
 
     .brand-title {
-      font-size: 1.25rem;
+      font-size: 1.18rem;
       font-weight: 700;
       letter-spacing: -0.03em;
     }
@@ -106,30 +103,30 @@
     }
 
     .ios-chip {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      color: #e2e8f0;
+      color: #e5e5ea;
       border: 1px solid var(--border);
-      padding: 0.45rem 0.9rem;
+      padding: 0.42rem 0.85rem;
       border-radius: 999px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
       transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
     }
 
     .ios-chip:active {
-      transform: scale(0.96);
-      background: rgba(255, 255, 255, 0.14);
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.16);
     }
 
     .ios-chip-admin {
-      background: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.45);
       color: var(--accent);
     }
 
@@ -137,49 +134,49 @@
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border);
       color: #ffffff;
-      padding: 0.45rem 0.9rem;
+      padding: 0.42rem 0.85rem;
       border-radius: 999px;
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
       transition: transform 0.15s ease, background 0.15s ease;
     }
 
     .ios-back-btn:active {
-      transform: scale(0.95);
+      transform: scale(0.94);
       background: rgba(255, 255, 255, 0.16);
     }
 
     .glass-card {
       background: var(--surface);
-      backdrop-filter: blur(35px);
-      -webkit-backdrop-filter: blur(35px);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 1.6rem;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+      padding: 1.5rem;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
       margin-bottom: 1.2rem;
     }
 
     .glass-card h2 {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 700;
       letter-spacing: -0.02em;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.1rem;
     }
 
     .field-box {
-      margin-bottom: 1.15rem;
+      margin-bottom: 1.1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.45rem;
+      gap: 0.4rem;
     }
 
     label {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--text-sub);
       text-transform: uppercase;
@@ -191,35 +188,36 @@
     input[type="password"],
     select {
       width: 100%;
-      background: rgba(12, 14, 21, 0.9);
+      background: rgba(10, 10, 14, 0.85);
       border: 1px solid var(--border);
       color: var(--text);
       padding: 0.95rem 1.1rem;
       border-radius: 16px;
-      font-size: 15px;
+      font-size: 16px;
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      user-select: text;
     }
 
     input:focus-visible, select:focus-visible {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
+      box-shadow: 0 0 0 4px var(--accent-glow);
     }
 
     .file-dropzone {
       position: relative;
-      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border: 2px dashed var(--border);
       border-radius: 18px;
-      padding: 1.8rem 1.2rem;
+      padding: 1.5rem 1rem;
       text-align: center;
-      background: rgba(12, 14, 21, 0.6);
+      background: rgba(10, 10, 14, 0.5);
       cursor: pointer;
       transition: border-color 0.2s ease, background 0.2s ease;
     }
 
     .file-dropzone.dragover {
       border-color: var(--accent);
-      background: rgba(16, 185, 129, 0.1);
+      background: rgba(16, 185, 129, 0.08);
     }
 
     .file-dropzone input[type="file"] {
@@ -232,48 +230,41 @@
       cursor: pointer;
     }
 
-    .dropzone-icon {
-      margin-bottom: 0.5rem;
-      color: var(--accent);
-    }
-
     .dropzone-label {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text-sub);
       pointer-events: none;
-      line-height: 1.4;
     }
 
     .dropzone-filename {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 600;
       color: var(--accent);
-      margin-top: 0.5rem;
+      margin-top: 0.4rem;
       display: none;
-      word-break: break-all;
     }
 
     .btn-submit {
       width: 100%;
       background: var(--accent);
-      color: #041f14;
+      color: #000;
       border: none;
       padding: 1rem;
       border-radius: 16px;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.98rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
       box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
-      transition: transform 0.15s ease, opacity 0.2s ease;
+      transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s, background 0.2s;
     }
 
     .btn-submit:active {
-      transform: scale(0.97);
-      opacity: 0.92;
+      transform: scale(0.96);
+      opacity: 0.9;
     }
 
     .btn-submit:disabled {
@@ -289,18 +280,14 @@
       box-shadow: none;
     }
 
-    .btn-secondary:active {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
     .toast-container {
       position: fixed;
       top: max(16px, env(safe-area-inset-top));
       left: 50%;
       transform: translateX(-50%);
       width: calc(100% - 32px);
-      max-width: 500px;
-      z-index: 3000;
+      max-width: 520px;
+      z-index: 2500;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
@@ -308,14 +295,14 @@
     }
 
     .toast {
-      padding: 0.9rem 1.2rem;
+      padding: 0.85rem 1.1rem;
       border-radius: 16px;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-weight: 500;
       line-height: 1.4;
       backdrop-filter: blur(25px);
       -webkit-backdrop-filter: blur(25px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
       animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       transition: opacity 0.2s ease, transform 0.2s ease;
       pointer-events: auto;
@@ -328,14 +315,14 @@
     }
 
     .toast.error {
-      background: rgba(45, 10, 10, 0.94);
+      background: rgba(45, 10, 10, 0.92);
       border: 1px solid rgba(255, 69, 58, 0.4);
-      color: #ffb4ab;
+      color: #ff9f97;
     }
 
     .toast.success {
-      background: rgba(8, 38, 26, 0.94);
-      border: 1px solid rgba(16, 185, 129, 0.45);
+      background: rgba(8, 36, 24, 0.92);
+      border: 1px solid rgba(16, 185, 129, 0.4);
       color: #a7f3d0;
     }
 
@@ -344,29 +331,29 @@
       justify-content: space-between;
       align-items: baseline;
       padding: 0 0.3rem;
-      margin-bottom: 0.9rem;
+      margin-bottom: 0.8rem;
     }
 
     .section-title {
-      font-size: 1.45rem;
+      font-size: 1.4rem;
       font-weight: 800;
       letter-spacing: -0.03em;
     }
 
     .filter-pills {
       display: flex;
-      gap: 0.45rem;
-      margin-bottom: 1.1rem;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
       padding: 0 0.2rem;
     }
 
     .filter-pill {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border);
       color: var(--text-sub);
-      padding: 0.4rem 0.85rem;
+      padding: 0.35rem 0.75rem;
       border-radius: 999px;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
@@ -374,14 +361,14 @@
 
     .filter-pill.active {
       background: rgba(16, 185, 129, 0.16);
-      border-color: rgba(16, 185, 129, 0.45);
+      border-color: rgba(16, 185, 129, 0.4);
       color: var(--accent);
     }
 
     .items-stream {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.65rem;
       margin-bottom: 9.5rem;
     }
 
@@ -390,13 +377,13 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 0.95rem 1.15rem;
+      border-radius: 19px;
+      padding: 0.9rem 1.05rem;
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.9rem;
       cursor: pointer;
-      transition: transform 0.18s cubic-bezier(0.25, 1, 0.5, 1), background 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), background 0.2s ease, border-color 0.2s ease;
     }
 
     .item-card:active {
@@ -406,16 +393,16 @@
 
     .item-card.is-active {
       border-color: var(--border-accent);
-      background: rgba(16, 185, 129, 0.1);
+      background: rgba(16, 185, 129, 0.08);
       box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
     }
 
     .item-icon-box {
-      width: 48px;
-      height: 48px;
-      min-width: 48px;
+      width: 46px;
+      height: 46px;
+      min-width: 46px;
       border-radius: 14px;
-      background: linear-gradient(135deg, #1f2230, #141620);
+      background: linear-gradient(135deg, #1c1c26, #121218);
       border: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -424,15 +411,9 @@
     }
 
     .item-icon-box.pdf {
-      color: #ff5252;
-      background: linear-gradient(135deg, rgba(255, 82, 82, 0.16), #1b1317);
-      border-color: rgba(255, 82, 82, 0.28);
-    }
-
-    .item-card.is-active .item-icon-box.audio {
-      background: linear-gradient(135deg, var(--accent), #059669);
-      color: #041f14;
-      border-color: transparent;
+      color: #ff453a;
+      background: linear-gradient(135deg, rgba(255, 69, 58, 0.15), #181214);
+      border-color: rgba(255, 69, 58, 0.25);
     }
 
     .item-info {
@@ -441,7 +422,7 @@
     }
 
     .item-title {
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
@@ -453,16 +434,16 @@
     }
 
     .item-sub {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: var(--text-sub);
-      margin-top: 0.25rem;
+      margin-top: 0.2rem;
     }
 
     .mini-eq {
       display: none;
       align-items: flex-end;
-      gap: 3px;
-      height: 18px;
+      gap: 2.5px;
+      height: 16px;
       padding-right: 0.2rem;
     }
 
@@ -483,7 +464,7 @@
 
     @keyframes eqJiggle {
       0% { height: 4px; }
-      100% { height: 18px; }
+      100% { height: 16px; }
     }
 
     .player-dock {
@@ -493,13 +474,13 @@
       bottom: max(16px, env(safe-area-inset-bottom));
       max-width: 620px;
       margin: 0 auto;
-      background: rgba(18, 20, 30, 0.94);
-      backdrop-filter: blur(35px) saturate(190%);
-      -webkit-backdrop-filter: blur(35px) saturate(190%);
+      background: rgba(18, 18, 24, 0.95);
+      backdrop-filter: blur(35px) saturate(180%);
+      -webkit-backdrop-filter: blur(35px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 28px;
-      padding: 1rem 1.3rem;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+      border-radius: 26px;
+      padding: 0.95rem 1.25rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
       z-index: 900;
       display: flex;
       flex-direction: column;
@@ -519,13 +500,8 @@
       gap: 0.6rem;
     }
 
-    .dock-title-box {
-      flex: 1;
-      min-width: 0;
-    }
-
     .dock-name {
-      font-size: 0.96rem;
+      font-size: 0.94rem;
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
@@ -533,7 +509,7 @@
     }
 
     .dock-badge {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       color: var(--accent);
       font-weight: 600;
       margin-top: 0.15rem;
@@ -542,7 +518,7 @@
     .scrubber-wrap {
       display: flex;
       flex-direction: column;
-      gap: 0.3rem;
+      gap: 0.25rem;
     }
 
     .scrubber {
@@ -559,44 +535,31 @@
     .scrubber::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: #ffffff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
       cursor: pointer;
-    }
-
-    .time-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: var(--text-sub);
-      font-variant-numeric: tabular-nums;
+      transition: transform 0.1s;
     }
 
     .dock-controls {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1.5rem;
+      gap: 1.4rem;
+      padding-top: 0.15rem;
     }
 
     .btn-ctrl {
       background: none;
       border: none;
-      color: #e2e8f0;
+      color: #e5e5ea;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.15s ease, color 0.15s ease;
-    }
-
-    .btn-ctrl:active {
-      transform: scale(0.86);
-      color: var(--accent);
     }
 
     .btn-ctrl-main {
@@ -604,22 +567,18 @@
       height: 52px;
       border-radius: 50%;
       background: #ffffff;
-      color: #090a0f;
-      box-shadow: 0 6px 18px rgba(255, 255, 255, 0.2);
+      color: #000000;
+      box-shadow: 0 6px 18px rgba(255, 255, 255, 0.25);
     }
 
-    .btn-ctrl-main:active {
-      transform: scale(0.92);
-      background: var(--accent);
-    }
-
+    /* PDF MODAL & CONTINUOUS VERTICAL SCROLL */
     .pdf-modal {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: #090a0f;
+      background: #09090d;
       z-index: 1000;
       display: flex;
       flex-direction: column;
@@ -627,7 +586,7 @@
     }
 
     @keyframes modalFade {
-      from { opacity: 0; transform: scale(0.99); }
+      from { opacity: 0; transform: scale(0.98); }
       to { opacity: 1; transform: scale(1); }
     }
 
@@ -636,12 +595,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(14, 16, 25, 0.95);
+      background: rgba(18, 18, 24, 0.95);
       border-bottom: 1px solid var(--border);
-      gap: 0.6rem;
+      gap: 0.5rem;
       z-index: 30;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
     }
 
     .pdf-title {
@@ -652,7 +609,6 @@
       text-overflow: ellipsis;
       flex: 1;
       text-align: center;
-      padding: 0 0.5rem;
     }
 
     .pdf-body-container {
@@ -662,14 +618,14 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      background: #0b0c13;
+      background: #0d0d12;
       overflow: hidden;
     }
 
     .pdf-loader-box {
       margin: auto;
       width: 90%;
-      max-width: 420px;
+      max-width: 440px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 26px;
@@ -679,33 +635,20 @@
       align-items: center;
       gap: 1.2rem;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
     }
 
     .cyber-spinner {
-      width: 56px;
-      height: 56px;
-      border: 3.5px solid rgba(16, 185, 129, 0.18);
+      width: 54px;
+      height: 54px;
+      border: 3.5px solid rgba(16, 185, 129, 0.15);
       border-top-color: var(--accent);
       border-radius: 50%;
       animation: cyberSpin 0.75s linear infinite;
-      box-shadow: 0 0 24px var(--accent-glow);
     }
 
     @keyframes cyberSpin {
       to { transform: rotate(360deg); }
-    }
-
-    .loader-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    .loader-sub {
-      font-size: 0.84rem;
-      color: var(--text-sub);
-      line-height: 1.45;
-      margin-top: 0.3rem;
     }
 
     .progress-track {
@@ -714,7 +657,6 @@
       background: rgba(255, 255, 255, 0.08);
       border-radius: 999px;
       overflow: hidden;
-      position: relative;
     }
 
     .progress-fill {
@@ -723,89 +665,102 @@
       background: linear-gradient(90deg, #10b981, #34d399);
       border-radius: 999px;
       transition: width 0.2s ease-out;
-      box-shadow: 0 0 12px var(--accent-glow);
     }
 
     .pdf-toolbar {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 0.5rem 1rem;
-      background: rgba(14, 16, 25, 0.92);
+      justify-content: space-between;
+      padding: 0.65rem 1rem;
+      background: rgba(18, 18, 24, 0.94);
       border-bottom: 1px solid var(--border);
+      gap: 0.5rem;
       z-index: 20;
     }
 
-    .pdf-page-indicator {
-      font-size: 0.84rem;
-      color: var(--text);
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      padding: 0.25rem 0.8rem;
-      background: rgba(255, 255, 255, 0.06);
+    .pdf-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .pdf-btn-action {
+      background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      color: var(--text);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
     }
 
-    .pdf-scroll-viewport {
+    .pdf-btn-action:active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .pdf-page-indicator {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      padding: 0 0.4rem;
+    }
+
+    /* Виртуализированный вертикальный скролл */
+    .pdf-viewport {
       flex: 1;
+      width: 100%;
+      height: 100%;
       overflow-y: auto;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      background: #0b0c13;
+      background: #0a0a0f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 1.5rem 0.5rem 3rem 0.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .pdf-pages-feed {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.4rem;
-      width: 100%;
-      max-width: 900px;
+      gap: 1.5rem;
+      scroll-behavior: smooth;
     }
 
     .pdf-page-wrapper {
       position: relative;
       background: #ffffff;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
-      border-radius: 8px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85);
+      border-radius: 6px;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: width 0.15s ease-out, height 0.15s ease-out;
     }
 
-    .pdf-page-wrapper canvas {
-      display: block;
+    .pdf-page-skeleton {
+      color: #9ca3af;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
       height: 100%;
+      background: #181822;
     }
 
-    .pdf-page-badge {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      background: rgba(10, 10, 15, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color: #ffffff;
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 6px;
-      pointer-events: none;
+    .pdf-page-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
     .admin-nav {
       display: flex;
-      gap: 0.4rem;
+      gap: 0.35rem;
       border-bottom: 1px solid var(--border);
       padding-bottom: 0.6rem;
       margin-bottom: 1.2rem;
@@ -816,13 +771,12 @@
       background: none;
       border: none;
       color: var(--text-sub);
-      padding: 0.45rem 0.85rem;
-      font-size: 0.86rem;
+      padding: 0.45rem 0.8rem;
+      font-size: 0.85rem;
       font-weight: 600;
       border-radius: 10px;
       cursor: pointer;
       white-space: nowrap;
-      transition: background 0.2s ease, color 0.2s ease;
     }
 
     .admin-tab.active {
@@ -831,15 +785,15 @@
     }
 
     .catalog-manage-item {
-      background: rgba(12, 14, 21, 0.8);
+      background: rgba(10, 10, 14, 0.75);
       border: 1px solid var(--border);
-      padding: 0.9rem 1.1rem;
-      border-radius: 16px;
+      padding: 0.85rem 1rem;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 0.8rem;
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.6rem;
     }
 
     .hidden {
@@ -880,7 +834,7 @@
   <section class="hidden" id="viewListener">
     <div class="section-header">
       <div class="section-title">Хранилище</div>
-      <div style="font-size: 0.82rem; color: var(--text-sub); font-weight: 500;" id="counterLabel">0 файлов</div>
+      <div style="font-size: 0.8rem; color: var(--text-sub);" id="counterLabel">0 файлов</div>
     </div>
 
     <div class="filter-pills" role="tablist">
@@ -893,47 +847,49 @@
 
     <div class="player-dock hidden" id="customDock">
       <div class="dock-meta">
-        <div class="dock-title-box">
+        <div style="flex: 1; min-width: 0;">
           <div class="dock-name" id="dockTrackName">Загрузка...</div>
           <div class="dock-badge" id="dockTrackStatus">AES-256-GCM в RAM</div>
         </div>
       </div>
 
       <div class="scrubber-wrap">
-        <input type="range" class="scrubber" id="dockScrubber" min="0" max="100" value="0" aria-label="Прогресс воспроизведения">
-        <div class="time-labels">
+        <input type="range" class="scrubber" id="dockScrubber" min="0" max="100" value="0" aria-label="Прогресс трека">
+        <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-sub);">
           <span id="labelCurrentTime">0:00</span>
           <span id="labelDuration">0:00</span>
         </div>
       </div>
 
       <div class="dock-controls">
-        <button class="btn-ctrl" id="btnSeekBack" title="Назад 15 сек" aria-label="Назад 15 секунд">
+        <button class="btn-ctrl" id="btnSeekBack" title="Назад 15 сек">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
         </button>
-        <button class="btn-ctrl btn-ctrl-main" id="btnPlayPause" aria-label="Воспроизведение / Пауза">
+        <button class="btn-ctrl btn-ctrl-main" id="btnPlayPause">
           <svg id="svgPlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           <svg id="svgPause" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
-        <button class="btn-ctrl" id="btnSeekForward" title="Вперед 15 сек" aria-label="Вперед 15 секунд">
+        <button class="btn-ctrl" id="btnSeekForward" title="Вперед 15 сек">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg>
         </button>
       </div>
     </div>
   </section>
 
+  <!-- PDF MODAL С НЕПРЕРЫВНЫМ СКРОЛЛОМ -->
   <div class="pdf-modal hidden" id="pdfViewerModal">
     <div class="pdf-header">
       <button class="ios-back-btn" id="btnClosePdf">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        Назад
+        Закрыть
       </button>
       <div class="pdf-title" id="pdfViewerTitle">Документ</div>
-      <div style="display: flex; gap: 0.45rem;">
-        <button class="ios-chip" id="btnDownloadPdfHeader" style="background: rgba(16, 185, 129, 0.16); color: var(--accent);">
+      <div style="display: flex; gap: 0.4rem;">
+        <button class="ios-chip" id="btnDownloadPdfHeader" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           Скачать
         </button>
+        <button class="ios-chip" id="btnOpenExternalPdf">↗</button>
       </div>
     </div>
 
@@ -941,8 +897,8 @@
       <div class="pdf-loader-box" id="pdfLoaderBox">
         <div class="cyber-spinner"></div>
         <div>
-          <div class="loader-title" id="pdfLoaderTitle">Загрузка и дешифрование</div>
-          <div class="loader-sub" id="pdfLoaderStatus">Инициализация потока данных...</div>
+          <div style="font-size: 1.1rem; font-weight: 700;" id="pdfLoaderTitle">Загрузка и дешифрование</div>
+          <div style="font-size: 0.82rem; color: var(--text-sub); margin-top: 0.3rem;" id="pdfLoaderStatus">Инициализация потока данных...</div>
         </div>
         <div class="progress-track">
           <div class="progress-fill" id="pdfProgressFill"></div>
@@ -950,12 +906,18 @@
       </div>
 
       <div class="pdf-toolbar hidden" id="pdfToolbar">
-        <div class="pdf-page-indicator" id="pdfPageLabel">1 / 1</div>
+        <div class="pdf-nav-group">
+          <span class="pdf-page-indicator" id="pdfPageLabel">Стр. 1 из 1</span>
+        </div>
+        <div class="pdf-nav-group">
+          <button class="pdf-btn-action" id="btnPdfZoomOut">−</button>
+          <span class="pdf-page-indicator" id="pdfZoomLabel">100%</span>
+          <button class="pdf-btn-action" id="btnPdfZoomIn">+</button>
+        </div>
       </div>
 
-      <div class="pdf-scroll-viewport hidden" id="pdfViewport">
-        <div class="pdf-pages-feed" id="pdfPagesFeed"></div>
-      </div>
+      <!-- Контейнер вертикальной бесконечной ленты -->
+      <div class="pdf-viewport hidden" id="pdfViewport"></div>
     </div>
   </div>
 
@@ -970,56 +932,50 @@
     </div>
 
     <div class="admin-nav" role="tablist">
-      <button class="admin-tab active" role="tab" id="tabBtnUpload" data-tab="upload">Загрузить</button>
-      <button class="admin-tab" role="tab" id="tabBtnManage" data-tab="manage">Каталог</button>
-      <button class="admin-tab" role="tab" id="tabBtnUsers" data-tab="users">Пользователи</button>
-      <button class="admin-tab" role="tab" id="tabBtnDiag" data-tab="diag">Диагностика</button>
-      <button class="admin-tab" role="tab" id="tabBtnSync" data-tab="sync">GitHub</button>
+      <button class="admin-tab active" role="tab" data-tab="upload">Загрузить</button>
+      <button class="admin-tab" role="tab" data-tab="manage">Каталог</button>
+      <button class="admin-tab" role="tab" data-tab="users">Пользователи</button>
+      <button class="admin-tab" role="tab" data-tab="sync">GitHub</button>
     </div>
 
     <div id="tabContentUpload">
       <form id="formUploadFile">
         <div class="field-box">
-          <label>Быстрая загрузка файла (PDF или Аудио)</label>
-          <div class="file-dropzone" id="dropZone">
-            <input type="file" id="uploadFileInput" accept=".pdf,application/pdf,audio/*,.mp3,.m4a,.wav">
-            <div class="dropzone-icon">
-              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-            </div>
-            <div class="dropzone-label" id="dropLabel">Нажмите для выбора или перетащите PDF / аудио сюда<br><span style="font-size: 0.78rem; opacity: 0.7;">Формат и название определятся автоматически</span></div>
-            <div class="dropzone-filename" id="dropFilename"></div>
-          </div>
-        </div>
-        <div class="field-box">
-          <label for="uploadTitleInput">Название документа или записи</label>
-          <input type="text" id="uploadTitleInput" placeholder="Определится автоматически при выборе файла" required>
-        </div>
-        <div class="field-box">
-          <label for="uploadTypeSelect">Тип контента</label>
+          <label for="uploadTypeSelect">Тип файла</label>
           <select id="uploadTypeSelect">
-            <option value="pdf">Документ (PDF)</option>
+            <option value="pdf">Документ (PDF до 2 ГБ без деления)</option>
             <option value="audio">Аудиозапись (MP3, M4A, AAC, WAV)</option>
           </select>
         </div>
         <div class="field-box">
-          <label for="uploadUrlInput">Или прямая ссылка на внешний файл</label>
-          <input type="text" id="uploadUrlInput" placeholder="https://example.com/file.pdf" spellcheck="false">
+          <label for="uploadTitleInput">Название записи / документа</label>
+          <input type="text" id="uploadTitleInput" placeholder="Например: Полный Учебник 150 МБ" required>
         </div>
-        <button type="submit" class="btn-submit" id="btnUploadSubmit">Зашифровать и сохранить в Vault</button>
+        <div class="field-box">
+          <label>Файл с устройства (AES-256 единым файлом)</label>
+          <div class="file-dropzone" id="dropZone">
+            <input type="file" id="uploadFileInput" accept=".pdf,application/pdf">
+            <div class="dropzone-label" id="dropLabel">Нажмите для выбора или перетащите файл (до 2 ГБ)</div>
+            <div class="dropzone-filename" id="dropFilename"></div>
+          </div>
+        </div>
+        <div class="field-box">
+          <label for="uploadUrlInput">Или внешняя прямая ссылка</label>
+          <input type="text" id="uploadUrlInput" placeholder="https://example.com/file.enc" spellcheck="false">
+        </div>
+        <button type="submit" class="btn-submit" id="btnUploadSubmit">Сохранить и загрузить</button>
       </form>
     </div>
 
     <div id="tabContentManage" class="hidden">
-      <p style="font-size: 0.84rem; color: var(--text-sub); margin-bottom: 1rem;">
-        Управление файлами каталога:
-      </p>
+      <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 1rem;">Управление файлами каталога:</p>
       <div id="catalogManageList"></div>
     </div>
 
     <div id="tabContentUsers" class="hidden">
-      <form id="formAddUser" style="background: rgba(12, 14, 21, 0.85); padding: 1.2rem; border-radius: 18px; margin-bottom: 1.2rem; border: 1px solid var(--border);">
+      <form id="formAddUser" style="background: rgba(10, 10, 14, 0.8); padding: 1.1rem; border-radius: 18px; margin-bottom: 1.2rem;">
         <div class="field-box">
-          <label for="inputNewUser">Логин нового слушателя</label>
+          <label for="inputNewUser">Логин пользователя</label>
           <input type="text" id="inputNewUser" placeholder="ivan" required autocapitalize="none" spellcheck="false">
         </div>
         <div class="field-box">
@@ -1031,14 +987,9 @@
       <div id="usersListRows"></div>
     </div>
 
-    <div id="tabContentDiag" class="hidden">
-      <button class="btn-submit btn-secondary" style="margin-bottom: 1rem;" id="btnRunDiag">Проверить доступность файлов</button>
-      <div id="diagLogsOutput" style="font-size: 0.82rem; line-height: 1.6; word-break: break-all;"></div>
-    </div>
-
     <div id="tabContentSync" class="hidden">
       <div class="field-box">
-        <label for="inputGhToken">GitHub Personal Access Token (contents:write)</label>
+        <label for="inputGhToken">GitHub Personal Access Token (repo / contents:write)</label>
         <input type="password" id="inputGhToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
       </div>
       <div class="field-box">
@@ -1046,7 +997,7 @@
         <input type="text" id="inputGhRepo" value="misha12333211-ctrl/Esp" spellcheck="false">
       </div>
       <div class="field-box">
-        <label for="inputGhBranch">Ветка</label>
+        <label for="inputGhBranch">Ветка для vault.json</label>
         <input type="text" id="inputGhBranch" value="main" spellcheck="false">
       </div>
       <button class="btn-submit btn-secondary" id="btnExportVaultDirect">Скачать vault.json вручную</button>
@@ -1055,8 +1006,8 @@
 
   <section class="glass-card hidden" id="viewInit">
     <h2>Инициализация хранилища</h2>
-    <p style="color: var(--text-sub); font-size: 0.86rem; margin-bottom: 1.2rem; line-height: 1.5;">
-      Файл vault.json не обнаружен. Задайте логин и мастер-пароль Администратора для создания ключа шифрования.
+    <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 1.1rem; line-height: 1.45;">
+      Файл vault.json не обнаружен. Задайте логин и пароль Администратора.
     </p>
     <form id="formInitVault">
       <div class="field-box">
@@ -1080,53 +1031,6 @@
   }
 
   const DEFAULT_ITERATIONS = 250000;
-  // 24 МБ — максимум под лимит GitHub (25 МБ) без лишнего дробления на мелкие части
-  const CHUNK_SIZE = 24 * 1024 * 1024;
-
-  /* Локальное хранилище IndexedDB (кэш расшифрованных/скачанных файлов) */
-  const dbPromise = new Promise((resolve) => {
-    try {
-      const req = indexedDB.open('CyberVaultStorage', 1);
-      req.onupgradeneeded = () => req.result.createObjectStore('files');
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => resolve(null);
-    } catch (_) {
-      resolve(null);
-    }
-  });
-
-  async function getCachedFile(key) {
-    try {
-      const db = await dbPromise;
-      if (!db) return null;
-      return new Promise((resolve) => {
-        const tx = db.transaction('files', 'readonly');
-        const req = tx.objectStore('files').get(key);
-        req.onsuccess = () => resolve(req.result || null);
-        req.onerror = () => resolve(null);
-      });
-    } catch (_) {
-      return null;
-    }
-  }
-
-  async function setCachedFile(key, buffer) {
-    try {
-      const db = await dbPromise;
-      if (!db) return;
-      const tx = db.transaction('files', 'readwrite');
-      tx.objectStore('files').put(buffer, key);
-    } catch (_) {}
-  }
-
-  async function removeCachedFile(key) {
-    try {
-      const db = await dbPromise;
-      if (!db) return;
-      const tx = db.transaction('files', 'readwrite');
-      tx.objectStore('files').delete(key);
-    } catch (_) {}
-  }
 
   const state = {
     vaultData: null,
@@ -1139,8 +1043,10 @@
     activePdfBlobUrl: null,
     activePdfTitle: '',
     currentPdfDoc: null,
-    pdfRenderTasks: {},
-    pdfObserver: null,
+    currentPdfZoom: 1.0,
+    pageViewports: {},
+    pageRenderTasks: {},
+    pageObserver: null,
     isScrubbing: false,
     activeAbortController: null,
     loadingSessionId: 0
@@ -1158,7 +1064,7 @@
       el.style.opacity = '0';
       el.style.transform = 'translateY(-10px)';
       setTimeout(() => el.remove(), 250);
-    }, 4200);
+    }, 4500);
   }
 
   function getBaseRepoUrl() {
@@ -1189,14 +1095,6 @@
     };
     const translit = String(str).toLowerCase().split('').map(c => map[c] || c).join('');
     return translit.replace(/[^a-zA-Z0-9_\-\.]/g, '_').replace(/_+/g, '_') || 'file';
-  }
-
-  function prettifyFilename(name) {
-    return name
-      .replace(/\.[^/.]+$/, "")
-      .replace(/[-_]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
   }
 
   async function sha256(str) {
@@ -1293,40 +1191,32 @@
     
     document.getElementById('btnClosePdf').addEventListener('click', () => closePdfViewer(true));
     document.getElementById('btnDownloadPdfHeader').addEventListener('click', downloadCurrentPdf);
+    document.getElementById('btnOpenExternalPdf').addEventListener('click', openPdfInNewTab);
+
+    document.getElementById('btnPdfZoomIn').addEventListener('click', () => changePdfZoom(0.2));
+    document.getElementById('btnPdfZoomOut').addEventListener('click', () => changePdfZoom(-0.2));
 
     document.getElementById('btnAdminBack').addEventListener('click', () => showScreen('listener'));
-    document.getElementById('btnRunDiag').addEventListener('click', runDiagScan);
     document.getElementById('btnExportVaultDirect').addEventListener('click', exportVaultDirectly);
 
     const uploadType = document.getElementById('uploadTypeSelect');
     const fileInput = document.getElementById('uploadFileInput');
-    const titleInput = document.getElementById('uploadTitleInput');
     const dropZone = document.getElementById('dropZone');
     const dropFilename = document.getElementById('dropFilename');
     const dropLabel = document.getElementById('dropLabel');
 
-    const handleFileChosen = (file) => {
-      if (!file) return;
-      dropFilename.textContent = file.name;
-      dropFilename.style.display = 'block';
-      dropLabel.style.display = 'none';
-
-      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-      uploadType.value = isPdf ? 'pdf' : 'audio';
-
-      if (!titleInput.value || titleInput.dataset.autofilled === "true") {
-        titleInput.value = prettifyFilename(file.name);
-        titleInput.dataset.autofilled = "true";
-      }
-    };
-
-    titleInput.addEventListener('input', () => {
-      titleInput.dataset.autofilled = "false";
+    uploadType.addEventListener('change', () => {
+      fileInput.value = '';
+      dropFilename.style.display = 'none';
+      dropLabel.style.display = 'block';
+      fileInput.accept = uploadType.value === 'pdf' ? '.pdf,application/pdf' : 'audio/*,.mp3,.m4a,.wav';
     });
 
     fileInput.addEventListener('change', () => {
       if (fileInput.files.length > 0) {
-        handleFileChosen(fileInput.files[0]);
+        dropFilename.textContent = `${fileInput.files[0].name} (${(fileInput.files[0].size / 1024 / 1024).toFixed(1)} MB)`;
+        dropFilename.style.display = 'block';
+        dropLabel.style.display = 'none';
       }
     });
 
@@ -1347,12 +1237,11 @@
     dropZone.addEventListener('drop', (e) => {
       if (e.dataTransfer.files.length > 0) {
         fileInput.files = e.dataTransfer.files;
-        handleFileChosen(fileInput.files[0]);
+        dropFilename.textContent = `${fileInput.files[0].name} (${(fileInput.files[0].size / 1024 / 1024).toFixed(1)} MB)`;
+        dropFilename.style.display = 'block';
+        dropLabel.style.display = 'none';
       }
     });
-
-    const pdfViewport = document.getElementById('pdfViewport');
-    pdfViewport.addEventListener('scroll', onPdfViewportScroll, { passive: true });
   }
 
   function showScreen(screen, pushHistory = true) {
@@ -1396,9 +1285,7 @@
       btn.disabled = true;
       const uHash = await sha256(user);
       const record = state.vaultData && state.vaultData.users ? state.vaultData.users[uHash] : null;
-      if (!record) {
-        throw new Error(`Пользователь «${user}» не найден в vault.json`);
-      }
+      if (!record) throw new Error(`Пользователь «${user}» не найден.`);
 
       const salt = new Uint8Array(base64ToBuf(record.salt));
       const iv = new Uint8Array(base64ToBuf(record.iv));
@@ -1410,18 +1297,12 @@
       for (const iters of itersList) {
         try {
           const userKey = await deriveUserKey(pass, salt, iters);
-          rawVaultKey = await crypto.subtle.decrypt(
-            { name: "AES-GCM", iv: iv },
-            userKey,
-            encKeyBuf
-          );
+          rawVaultKey = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, userKey, encKeyBuf);
           if (rawVaultKey) break;
         } catch (_) {}
       }
 
-      if (!rawVaultKey) {
-        throw new Error('Неверный секретный пароль.');
-      }
+      if (!rawVaultKey) throw new Error('Неверный пароль.');
 
       state.vaultKey = await crypto.subtle.importKey(
         "raw",
@@ -1443,7 +1324,7 @@
 
       renderLibrary();
       showScreen('listener');
-      toast('Хранилище расшифровано');
+      toast('Хранилище успешно расшифровано');
     } catch (err) {
       toast(err.message || 'Ошибка доступа', 'error');
     } finally {
@@ -1465,7 +1346,7 @@
     document.getElementById('counterLabel').textContent = `${state.items.length} файлов`;
 
     if (filtered.length === 0) {
-      list.innerHTML = '<div style="color: var(--text-sub); text-align: center; padding: 3.5rem 1rem;">В данном разделе нет файлов.</div>';
+      list.innerHTML = '<div style="color: var(--text-sub); text-align: center; padding: 3rem 1rem;">Хранилище пусто.</div>';
       return;
     }
 
@@ -1498,7 +1379,7 @@
         </div>
         <div class="item-info">
           <div class="item-title">${escapeHtml(item.title)}</div>
-          <div class="item-sub">${isAudio ? 'Аудиозапись' : 'PDF Документ'} • ${escapeHtml(item.size || '')} • ${escapeHtml(item.date || '')}</div>
+          <div class="item-sub">${isAudio ? 'Аудио' : 'PDF Документ'} • ${escapeHtml(item.size || '')} • ${escapeHtml(item.date || '')}</div>
         </div>
         ${isAudio ? `
           <div class="mini-eq">
@@ -1512,95 +1393,676 @@
     });
   }
 
-  async function fetchSingleBinary(filename, signal) {
-    const clean = filename.replace(/^[/\\]+/, '');
-    if (clean.startsWith('http://') || clean.startsWith('https://')) {
-      const res = await fetch(clean, { cache: 'no-store', signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  async function fetchFileBinary(targetUrl, signal, onProgress) {
+    const res = await fetch(targetUrl, { cache: 'no-store', signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const contentLength = res.headers.get('content-length');
+    const total = contentLength ? parseInt(contentLength, 10) : 0;
+
+    if (!res.body || !total) {
       const buf = await res.arrayBuffer();
-      if (buf.byteLength < 16) throw new Error('Файл поврежден или пуст');
+      if (onProgress) onProgress(100);
       return buf;
     }
 
-    const base = getBaseRepoUrl();
-    const tryUrls = [
-      new URL(`tracks/${clean}`, base).href,
-      new URL(clean, base).href,
-      new URL(`tracks/${encodeURIComponent(clean)}`, base).href,
-      new URL(encodeURIComponent(clean), base).href
-    ];
+    const reader = res.body.getReader();
+    let received = 0;
+    const chunks = [];
 
-    let lastErr = '';
-    for (const u of [...new Set(tryUrls)]) {
-      try {
-        const res = await fetch(u + `?_cb=${Date.now()}`, { cache: 'no-store', signal });
-        if (res.ok) {
-          const buf = await res.arrayBuffer();
-          if (buf.byteLength < 16) throw new Error('Файл поврежден');
-          return buf;
-        } else {
-          lastErr = `HTTP ${res.status}`;
-        }
-      } catch (e) {
-        if (e.name === 'AbortError') throw e;
-        lastErr = e.message;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      received += value.length;
+      if (onProgress) {
+        onProgress(Math.min(99, Math.round((received / total) * 100)));
       }
     }
-    throw new Error(`Файл не найден (${lastErr})`);
+
+    const fullBuffer = new Uint8Array(received);
+    let offset = 0;
+    for (const chunk of chunks) {
+      fullBuffer.set(chunk, offset);
+      offset += chunk.length;
+    }
+    return fullBuffer.buffer;
   }
 
-  /* Загрузка с авто-кэшированием в IndexedDB и параллельным скачиванием частей */
-  async function fetchEncryptedData(target, signal, onProgress) {
-    const item = (typeof target === 'object' && target !== null) ? target : { filename: target };
-    const cacheKey = item.id || item.filename || (Array.isArray(item.chunks) ? item.chunks.join('_') : 'unknown_file');
+  async function resolveItemUrl(item) {
+    if (item.downloadUrl) return item.downloadUrl;
+    if (item.filename && (item.filename.startsWith('http://') || item.filename.startsWith('https://'))) {
+      return item.filename;
+    }
+    const clean = (item.filename || '').replace(/^[/\\]+/, '');
+    const base = getBaseRepoUrl();
+    return new URL(`tracks/${clean}`, base).href + `?_cb=${Date.now()}`;
+  }
 
-    // 1. Проверяем локальный кэш — повторная загрузка из сети не потребуется
-    const cached = await getCachedFile(cacheKey);
-    if (cached) {
-      if (onProgress) onProgress(1, 1);
-      return cached;
+  // PDF.JS С СИСТЕМОЙ ВИРТУАЛИЗИРОВАННОГО ВЕРТИКАЛЬНОГО СКРОЛЛА
+  async function openPdfItem(idx) {
+    const item = state.items[idx];
+    if (!item) return;
+
+    history.pushState({ modal: 'pdf' }, '');
+
+    const modal = document.getElementById('pdfViewerModal');
+    const title = document.getElementById('pdfViewerTitle');
+    const loaderBox = document.getElementById('pdfLoaderBox');
+    const loaderTitle = document.getElementById('pdfLoaderTitle');
+    const loaderStatus = document.getElementById('pdfLoaderStatus');
+    const progressFill = document.getElementById('pdfProgressFill');
+    const toolbar = document.getElementById('pdfToolbar');
+    const viewport = document.getElementById('pdfViewport');
+
+    modal.classList.remove('hidden');
+    toolbar.classList.add('hidden');
+    viewport.classList.add('hidden');
+    viewport.innerHTML = '';
+    loaderBox.classList.remove('hidden');
+
+    title.textContent = item.title;
+    state.activePdfTitle = item.title;
+    loaderTitle.textContent = item.title;
+    loaderStatus.textContent = 'Инициализация загрузки документа (до 2 ГБ)...';
+    progressFill.style.width = '10%';
+
+    try {
+      const url = await resolveItemUrl(item);
+      const isPlain = url.toLowerCase().endsWith('.pdf') && !url.toLowerCase().includes('.enc');
+
+      let decryptedArrayBuffer = null;
+
+      if (isPlain) {
+        loaderStatus.textContent = 'Загрузка внешнего PDF...';
+        decryptedArrayBuffer = await fetchFileBinary(url, undefined, (pct) => {
+          progressFill.style.width = `${pct}%`;
+          loaderStatus.textContent = `Загрузка: ${pct}%`;
+        });
+      } else {
+        loaderStatus.textContent = 'Загрузка зашифрованного файла...';
+        const encryptedBuffer = await fetchFileBinary(url, undefined, (pct) => {
+          progressFill.style.width = `${Math.floor(pct * 0.75)}%`;
+          loaderStatus.textContent = `Загрузка: ${pct}%`;
+        });
+
+        loaderStatus.textContent = 'Расшифровка AES-256 в RAM...';
+        progressFill.style.width = '85%';
+
+        const bytes = new Uint8Array(encryptedBuffer);
+        const iv = bytes.subarray(0, 12);
+        const ciphertext = bytes.subarray(12);
+
+        decryptedArrayBuffer = await crypto.subtle.decrypt(
+          { name: "AES-GCM", iv: iv },
+          state.vaultKey,
+          ciphertext
+        );
+      }
+
+      progressFill.style.width = '98%';
+      loaderStatus.textContent = 'Инициализация страниц...';
+
+      if (state.activePdfBlobUrl) URL.revokeObjectURL(state.activePdfBlobUrl);
+      const blob = new Blob([decryptedArrayBuffer], { type: 'application/pdf' });
+      state.activePdfBlobUrl = URL.createObjectURL(blob);
+
+      if (!window.pdfjsLib) throw new Error('PDF.js библиотека недоступна');
+
+      const loadingTask = pdfjsLib.getDocument({ data: decryptedArrayBuffer });
+      state.currentPdfDoc = await loadingTask.promise;
+      state.currentPdfZoom = 1.0;
+      state.pageViewports = {};
+
+      loaderBox.classList.add('hidden');
+      toolbar.classList.remove('hidden');
+      viewport.classList.remove('hidden');
+
+      initContinuousPdfScroll();
+    } catch (e) {
+      toast("Ошибка открытия документа: " + e.message, 'error');
+      closePdfViewer(false);
+    }
+  }
+
+  async function initContinuousPdfScroll() {
+    const doc = state.currentPdfDoc;
+    const viewport = document.getElementById('pdfViewport');
+    viewport.innerHTML = '';
+
+    // Получаем соотношение сторон первой страницы как эталон
+    const samplePage = await doc.getPage(1);
+    const unscaled = samplePage.getViewport({ scale: 1 });
+    const aspectRatio = unscaled.height / unscaled.width;
+
+    const availableWidth = Math.min(840, Math.max(320, viewport.clientWidth - 32));
+    const initialWidth = availableWidth * state.currentPdfZoom;
+    const initialHeight = initialWidth * aspectRatio;
+
+    if (state.pageObserver) {
+      state.pageObserver.disconnect();
     }
 
-    let assembledBuffer = null;
+    // Создаем контейнеры страниц (ленту)
+    for (let i = 1; i <= doc.numPages; i++) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'pdf-page-wrapper';
+      wrapper.id = `pdfPageWrap_${i}`;
+      wrapper.dataset.page = i;
+      wrapper.style.width = `${initialWidth}px`;
+      wrapper.style.height = `${initialHeight}px`;
 
-    if (Array.isArray(item.chunks) && item.chunks.length > 1) {
-      const total = item.chunks.length;
-      let completed = 0;
-      if (onProgress) onProgress(0, total);
+      const skeleton = document.createElement('div');
+      skeleton.className = 'pdf-page-skeleton';
+      skeleton.textContent = `Страница ${i}`;
+      wrapper.appendChild(skeleton);
 
-      // Параллельная загрузка всех частей одновременно
-      const tasks = item.chunks.map(async (chunkName, index) => {
-        const buf = await fetchSingleBinary(chunkName, signal);
-        completed++;
-        if (onProgress) onProgress(completed, total);
-        return { index, buf };
+      viewport.appendChild(wrapper);
+    }
+
+    // IntersectionObserver для ленивого рендера (экономит память при 150 МБ файлах)
+    state.pageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const pageNum = parseInt(entry.target.dataset.page, 10);
+        if (entry.isIntersecting) {
+          renderPdfPageItem(pageNum, entry.target);
+          updateCurrentPageLabel(pageNum);
+        } else {
+          destroyPdfPageItem(pageNum, entry.target);
+        }
+      });
+    }, {
+      root: viewport,
+      rootMargin: '450px 0px 450px 0px'
+    });
+
+    document.querySelectorAll('.pdf-page-wrapper').forEach(el => {
+      state.pageObserver.observe(el);
+    });
+
+    updatePdfZoomDisplay();
+    document.getElementById('pdfPageLabel').textContent = `Стр. 1 из ${doc.numPages}`;
+  }
+
+  function updateCurrentPageLabel(p) {
+    if (state.currentPdfDoc) {
+      document.getElementById('pdfPageLabel').textContent = `Стр. ${p} из ${state.currentPdfDoc.numPages}`;
+    }
+  }
+
+  async function renderPdfPageItem(pageNum, wrapper) {
+    if (wrapper.querySelector('canvas') || wrapper.dataset.rendering === 'true') return;
+    wrapper.dataset.rendering = 'true';
+
+    try {
+      const page = await state.currentPdfDoc.getPage(pageNum);
+      const viewportElem = document.getElementById('pdfViewport');
+      const containerWidth = Math.min(840, Math.max(320, viewportElem.clientWidth - 32));
+      const targetWidth = containerWidth * state.currentPdfZoom;
+
+      const unscaled = page.getViewport({ scale: 1 });
+      const scale = targetWidth / unscaled.width;
+      const pdfViewport = page.getViewport({ scale });
+
+      wrapper.style.width = `${Math.floor(pdfViewport.width)}px`;
+      wrapper.style.height = `${Math.floor(pdfViewport.height)}px`;
+
+      const canvas = document.createElement('canvas');
+      canvas.className = 'pdf-page-canvas';
+      const ctx = canvas.getContext('2d', { alpha: false });
+
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(pdfViewport.width * dpr);
+      canvas.height = Math.floor(pdfViewport.height * dpr);
+
+      const renderContext = {
+        canvasContext: ctx,
+        transform: dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null,
+        viewport: pdfViewport
+      };
+
+      const renderTask = page.render(renderContext);
+      state.pageRenderTasks[pageNum] = renderTask;
+
+      await renderTask.promise;
+      delete state.pageRenderTasks[pageNum];
+
+      wrapper.innerHTML = '';
+      wrapper.appendChild(canvas);
+      wrapper.dataset.rendering = 'false';
+    } catch (e) {
+      if (e.name !== 'RenderingCancelledException') {
+        console.error(`Page ${pageNum} render error:`, e);
+      }
+      wrapper.dataset.rendering = 'false';
+    }
+  }
+
+  function destroyPdfPageItem(pageNum, wrapper) {
+    if (state.pageRenderTasks[pageNum]) {
+      try { state.pageRenderTasks[pageNum].cancel(); } catch (_) {}
+      delete state.pageRenderTasks[pageNum];
+    }
+    if (wrapper.querySelector('canvas')) {
+      const w = wrapper.style.width;
+      const h = wrapper.style.height;
+      wrapper.innerHTML = `<div class="pdf-page-skeleton">Страница ${pageNum}</div>`;
+      wrapper.style.width = w;
+      wrapper.style.height = h;
+    }
+  }
+
+  function changePdfZoom(delta) {
+    const nextZoom = Math.max(0.6, Math.min(2.5, state.currentPdfZoom + delta));
+    if (nextZoom === state.currentPdfZoom) return;
+    state.currentPdfZoom = nextZoom;
+    updatePdfZoomDisplay();
+
+    // Пересчет размеров ленты
+    const viewportElem = document.getElementById('pdfViewport');
+    const containerWidth = Math.min(840, Math.max(320, viewportElem.clientWidth - 32));
+    const targetWidth = containerWidth * state.currentPdfZoom;
+
+    document.querySelectorAll('.pdf-page-wrapper').forEach(wrapper => {
+      const pageNum = parseInt(wrapper.dataset.page, 10);
+      const curW = parseFloat(wrapper.style.width) || targetWidth;
+      const curH = parseFloat(wrapper.style.height) || (targetWidth * 1.414);
+      const ratio = curH / curW;
+
+      wrapper.style.width = `${Math.floor(targetWidth)}px`;
+      wrapper.style.height = `${Math.floor(targetWidth * ratio)}px`;
+
+      // Перерисовываем если холст в фокусе
+      if (wrapper.querySelector('canvas')) {
+        destroyPdfPageItem(pageNum, wrapper);
+        renderPdfPageItem(pageNum, wrapper);
+      }
+    });
+  }
+
+  function updatePdfZoomDisplay() {
+    document.getElementById('pdfZoomLabel').textContent = `${Math.round(state.currentPdfZoom * 100)}%`;
+  }
+
+  function downloadCurrentPdf() {
+    if (!state.activePdfBlobUrl) return;
+    const a = document.createElement('a');
+    a.href = state.activePdfBlobUrl;
+    a.download = `${sanitizeFilename(state.activePdfTitle || 'document')}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast('Файл скачан');
+  }
+
+  function openPdfInNewTab() {
+    if (state.activePdfBlobUrl) {
+      window.open(state.activePdfBlobUrl, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  function closePdfViewer(goHistoryBack = true) {
+    const modal = document.getElementById('pdfViewerModal');
+    modal.classList.add('hidden');
+
+    if (state.pageObserver) {
+      state.pageObserver.disconnect();
+      state.pageObserver = null;
+    }
+
+    Object.keys(state.pageRenderTasks).forEach(k => {
+      try { state.pageRenderTasks[k].cancel(); } catch (_) {}
+    });
+    state.pageRenderTasks = {};
+
+    if (state.currentPdfDoc) {
+      try { state.currentPdfDoc.destroy(); } catch (_) {}
+      state.currentPdfDoc = null;
+    }
+
+    if (state.activePdfBlobUrl) {
+      URL.revokeObjectURL(state.activePdfBlobUrl);
+      state.activePdfBlobUrl = null;
+    }
+
+    state.activePdfTitle = '';
+
+    if (goHistoryBack && history.state && history.state.modal === 'pdf') {
+      history.back();
+    }
+  }
+
+  // ЗАГРУЗКА 150 МБ БЕЗ ДЕЛЕНИЯ НА ЧАСТИ (GITHUB RELEASES API ДО 2 ГБ)
+  async function onUploadFileSubmit(e) {
+    e.preventDefault();
+    const type = document.getElementById('uploadTypeSelect').value;
+    const title = document.getElementById('uploadTitleInput').value.trim();
+    const file = document.getElementById('uploadFileInput').files[0];
+    const directUrl = document.getElementById('uploadUrlInput').value.trim();
+    const btn = document.getElementById('btnUploadSubmit');
+
+    if (!file && !directUrl) {
+      toast('Выберите файл или введите ссылку', 'error');
+      return;
+    }
+
+    try {
+      btn.disabled = true;
+
+      if (!file && directUrl) {
+        state.items.push({
+          id: `ext_${Date.now()}`,
+          filename: directUrl,
+          title: title,
+          type: type,
+          size: 'Внешняя ссылка',
+          date: new Date().toLocaleDateString('ru-RU')
+        });
+
+        await saveCatalogState();
+        await syncVaultManifest();
+        resetUploadForm();
+        return;
+      }
+
+      toast(`Шифрование файла ${(file.size / 1024 / 1024).toFixed(1)} МБ в RAM...`);
+
+      const fileBuffer = await file.arrayBuffer();
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const encrypted = await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv: iv },
+        state.vaultKey,
+        fileBuffer
+      );
+
+      // Склеиваем IV + шифротекст в единый бинарный файл
+      const combined = new Uint8Array(12 + encrypted.byteLength);
+      combined.set(iv, 0);
+      combined.set(new Uint8Array(encrypted), 12);
+
+      const cleanName = sanitizeFilename(file.name.replace(/\.[^/.]+$/, ""));
+      const fileNameOnVault = `${type}_${Date.now()}_${cleanName}.enc`;
+
+      const token = document.getElementById('inputGhToken').value.trim();
+      const repo = document.getElementById('inputGhRepo').value.trim();
+
+      let directDownloadUrl = null;
+
+      if (token && repo) {
+        toast('GitHub Releases: прямая загрузка потоком (до 2 ГБ)...');
+        // Загрузка через Releases API не требует разделения на части
+        directDownloadUrl = await githubUploadReleaseAsset(repo, token, fileNameOnVault, combined.buffer);
+      } else {
+        // Локальное скачивание единого зашифрованного файла
+        downloadDirectBlob(new Blob([combined.buffer]), fileNameOnVault);
+        toast('Файл зашифрован и сохранен на устройство');
+      }
+
+      state.items.push({
+        id: fileNameOnVault,
+        filename: fileNameOnVault,
+        downloadUrl: directDownloadUrl,
+        title: title,
+        type: type,
+        size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
+        date: new Date().toLocaleDateString('ru-RU')
       });
 
-      const parts = await Promise.all(tasks);
-      parts.sort((a, b) => a.index - b.index);
+      await saveCatalogState();
+      await syncVaultManifest();
 
-      let totalLength = 0;
-      for (const p of parts) totalLength += p.buf.byteLength;
+      resetUploadForm();
+      renderManageCatalog();
+      renderLibrary();
+      toast('Файл успешно добавлен в Vault!');
+    } catch (err) {
+      toast('Ошибка загрузки: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
 
-      const assembled = new Uint8Array(totalLength);
-      let offset = 0;
-      for (const p of parts) {
-        assembled.set(new Uint8Array(p.buf), offset);
-        offset += p.buf.byteLength;
-      }
-      assembledBuffer = assembled.buffer;
+  // GitHub Release Asset Uploader (поддержка файлов до 2 ГБ)
+  async function githubUploadReleaseAsset(repo, token, filename, buffer) {
+    // 1. Получаем или создаем релиз для данных
+    let release = null;
+    const relsRes = await fetch(`https://api.github.com/repos/${repo}/releases`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (relsRes.ok) {
+      const rels = await relsRes.json();
+      release = rels.find(r => r.tag_name === 'vault-data');
+    }
+
+    if (!release) {
+      const createRel = await fetch(`https://api.github.com/repos/${repo}/releases`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tag_name: 'vault-data',
+          name: 'CyberVault Storage Repository',
+          body: 'Хранилище защищенных зашифрованных бинарных файлов CyberVault.',
+          draft: false,
+          prerelease: false
+        })
+      });
+      if (!createRel.ok) throw new Error('Не удалось создать Release для хранения файлов');
+      release = await createRel.json();
+    }
+
+    // 2. Загружаем бинарный файл потоком без перевода в Base64
+    const uploadUrl = release.upload_url.replace(/\{(\?name,label)?\}/, '') + `?name=${encodeURIComponent(filename)}`;
+    const upRes = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/octet-stream'
+      },
+      body: buffer
+    });
+
+    if (!upRes.ok) {
+      const err = await upRes.json();
+      throw new Error(err.message || 'Сбой загрузки в Release');
+    }
+
+    const assetData = await upRes.json();
+    return assetData.browser_download_url;
+  }
+
+  async function syncVaultManifest() {
+    const token = document.getElementById('inputGhToken').value.trim();
+    const repo = document.getElementById('inputGhRepo').value.trim();
+    if (token && repo) {
+      await githubUploadOrUpdateFile(
+        repo,
+        'vault.json',
+        new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)),
+        'Update vault.json catalog manifest'
+      );
     } else {
-      if (onProgress) onProgress(1, 1);
-      const fname = (Array.isArray(item.chunks) && item.chunks.length === 1) ? item.chunks[0] : item.filename;
-      assembledBuffer = await fetchSingleBinary(fname, signal);
+      exportVaultDirectly();
+    }
+  }
+
+  async function githubUploadOrUpdateFile(repo, path, contentBuffer, message) {
+    const token = document.getElementById('inputGhToken').value.trim();
+    const branch = document.getElementById('inputGhBranch').value.trim() || 'main';
+    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+    let sha = null;
+    try {
+      const g = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (g.ok) {
+        const j = await g.json();
+        sha = j.sha;
+      }
+    } catch (_) {}
+
+    const p = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message,
+        content: bufToBase64(contentBuffer),
+        branch,
+        ...(sha ? { sha } : {})
+      })
+    });
+
+    if (!p.ok) {
+      const err = await p.json();
+      throw new Error(err.message || 'Ошибка обновления манифеста на GitHub');
+    }
+  }
+
+  function resetUploadForm() {
+    document.getElementById('uploadTitleInput').value = '';
+    document.getElementById('uploadFileInput').value = '';
+    document.getElementById('uploadUrlInput').value = '';
+    document.getElementById('dropFilename').style.display = 'none';
+    document.getElementById('dropLabel').style.display = 'block';
+  }
+
+  function switchAdminTab(t) {
+    ['upload', 'manage', 'users', 'sync'].forEach(name => {
+      document.getElementById(`tabContent${capitalize(name)}`).classList.toggle('hidden', name !== t);
+      const btn = document.querySelector(`.admin-tab[data-tab="${name}"]`);
+      if (btn) {
+        btn.classList.toggle('active', name === t);
+        btn.setAttribute('aria-selected', name === t ? 'true' : 'false');
+      }
+    });
+    if (t === 'manage') renderManageCatalog();
+    if (t === 'users') renderUsersManage();
+  }
+
+  function renderManageCatalog() {
+    const box = document.getElementById('catalogManageList');
+    box.innerHTML = '';
+
+    if (state.items.length === 0) {
+      box.innerHTML = '<div style="color: var(--text-sub); text-align: center; padding: 2rem;">Каталог пуст.</div>';
+      return;
     }
 
-    // 2. Сохраняем в кэш IndexedDB на устройстве
-    if (assembledBuffer && assembledBuffer.byteLength > 0) {
-      await setCachedFile(cacheKey, assembledBuffer);
-    }
+    state.items.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'catalog-manage-item';
+      div.innerHTML = `
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(item.title)}</div>
+          <div style="font-size: 0.75rem; color: var(--text-sub);">${item.type === 'pdf' ? 'PDF' : 'Аудио'} • ${escapeHtml(item.size || '')}</div>
+        </div>
+        <button class="ios-chip" style="color: var(--danger); border-color: rgba(255, 69, 58, 0.4);" data-action="delete" data-index="${index}">Удалить</button>
+      `;
+      box.appendChild(div);
+    });
 
-    return assembledBuffer;
+    box.querySelectorAll('button[data-action="delete"]').forEach(btn => {
+      btn.addEventListener('click', () => deleteItemFromCatalog(Number(btn.dataset.index)));
+    });
+  }
+
+  async function deleteItemFromCatalog(index) {
+    const item = state.items[index];
+    if (!item) return;
+
+    if (!confirm(`Удалить «${item.title}» из каталога?`)) return;
+
+    try {
+      if (state.activeAudioIndex === index) {
+        hardResetAudioEngine();
+        document.getElementById('customDock').classList.add('hidden');
+        state.activeAudioIndex = -1;
+      }
+
+      state.items.splice(index, 1);
+      await saveCatalogState();
+      await syncVaultManifest();
+
+      renderManageCatalog();
+      renderLibrary();
+      toast(`Запись «${item.title}» удалена`);
+    } catch (err) {
+      toast('Ошибка удаления: ' + err.message, 'error');
+    }
+  }
+
+  async function saveCatalogState() {
+    const catIv = crypto.getRandomValues(new Uint8Array(12));
+    const encCatalog = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: catIv },
+      state.vaultKey,
+      new TextEncoder().encode(JSON.stringify(state.items))
+    );
+    state.vaultData.catalog = { iv: bufToBase64(catIv), data: bufToBase64(encCatalog) };
+  }
+
+  async function onAddUserSubmit(e) {
+    e.preventDefault();
+    const user = document.getElementById('inputNewUser').value.trim();
+    const pass = document.getElementById('inputNewPass').value.trim();
+
+    try {
+      const uHash = await sha256(user);
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const userKey = await deriveUserKey(pass, salt, DEFAULT_ITERATIONS);
+
+      const rawVaultKey = await crypto.subtle.exportKey("raw", state.vaultKey);
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const encKey = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, userKey, rawVaultKey);
+
+      state.vaultData.users[uHash] = {
+        role: "user",
+        salt: bufToBase64(salt),
+        iv: bufToBase64(iv),
+        encKey: bufToBase64(encKey),
+        iterations: DEFAULT_ITERATIONS
+      };
+
+      await syncVaultManifest();
+      renderUsersManage();
+      toast(`Пользователь «${user}» добавлен`);
+
+      document.getElementById('inputNewUser').value = '';
+      document.getElementById('inputNewPass').value = '';
+    } catch (e) {
+      toast('Ошибка: ' + e.message, 'error');
+    }
+  }
+
+  function renderUsersManage() {
+    const box = document.getElementById('usersListRows');
+    box.innerHTML = '';
+    Object.keys(state.vaultData.users).forEach(hash => {
+      const u = state.vaultData.users[hash];
+      const div = document.createElement('div');
+      div.style.cssText = 'background: rgba(10, 10, 14, 0.7); padding: 0.85rem 1rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; margin-bottom: 0.5rem;';
+      div.innerHTML = `
+        <div>
+          <span style="font-family: monospace;">${escapeHtml(hash.substring(0, 10))}...</span>
+          <span style="color: var(--accent); margin-left: 0.5rem; font-weight: 600;">[${escapeHtml(u.role)}]</span>
+        </div>
+        ${u.role !== 'admin' ? `<button class="ios-chip" style="color: var(--danger);" data-userhash="${escapeHtml(hash)}">Удалить</button>` : '<span style="font-size: 0.75rem; color: var(--text-sub);">Администратор</span>'}
+      `;
+      box.appendChild(div);
+    });
+
+    box.querySelectorAll('button[data-userhash]').forEach(btn => {
+      btn.addEventListener('click', () => revokeUserAccess(btn.dataset.userhash));
+    });
+  }
+
+  async function revokeUserAccess(hash) {
+    if (confirm('Отозвать доступ для этого пользователя?')) {
+      delete state.vaultData.users[hash];
+      await syncVaultManifest();
+      renderUsersManage();
+      toast('Пользователь удален');
+    }
   }
 
   function hardResetAudioEngine() {
@@ -1610,49 +2072,47 @@
       hardwareAudio.load();
     } catch (_) {}
 
-    if (state.activeAudioBlobUrl && !state.activeAudioBlobUrl.startsWith('http')) {
+    if (state.activeAudioBlobUrl) {
       URL.revokeObjectURL(state.activeAudioBlobUrl);
+      state.activeAudioBlobUrl = null;
     }
-    state.activeAudioBlobUrl = null;
   }
 
   async function playAudioItem(idx) {
     const item = state.items[idx];
     if (!item) return;
 
-    if (state.activeAbortController) {
-      state.activeAbortController.abort();
-    }
+    if (state.activeAbortController) state.activeAbortController.abort();
     state.activeAbortController = new AbortController();
     const currentSession = ++state.loadingSessionId;
 
     state.activeAudioIndex = idx;
     renderLibrary();
-
     hardResetAudioEngine();
+
     const dock = document.getElementById('customDock');
     const nameEl = document.getElementById('dockTrackName');
     const statusEl = document.getElementById('dockTrackStatus');
 
     dock.classList.remove('hidden');
     nameEl.textContent = item.title;
-
-    const isUrl = item.filename && (item.filename.startsWith('http://') || item.filename.startsWith('https://'));
-    const isDirectAudio = isUrl && !item.filename.toLowerCase().includes('.enc');
-
-    if (isDirectAudio) {
-      hardwareAudio.src = item.filename;
-      statusEl.textContent = 'Внешний аудиопоток';
-      hardwareAudio.play().catch(() => { statusEl.textContent = 'Нажмите ▶ для запуска'; });
-      return;
-    }
-
-    statusEl.textContent = 'Дешифрование в RAM...';
+    statusEl.textContent = 'Дешифрование аудиопотока в RAM...';
 
     try {
-      const buffer = await fetchEncryptedData(item, state.activeAbortController.signal, (cur, total) => {
-        statusEl.textContent = total > 1 ? `Загрузка: ${cur} из ${total}...` : 'Загрузка потока...';
+      const url = await resolveItemUrl(item);
+      const isPlainAudio = url.toLowerCase().match(/\.(mp3|m4a|wav|aac)$/) && !url.includes('.enc');
+
+      if (isPlainAudio) {
+        hardwareAudio.src = url;
+        hardwareAudio.play().catch(() => {});
+        statusEl.textContent = 'Внешний аудиопоток';
+        return;
+      }
+
+      const buffer = await fetchFileBinary(url, state.activeAbortController.signal, (pct) => {
+        statusEl.textContent = `Загрузка: ${pct}%`;
       });
+
       if (currentSession !== state.loadingSessionId) return;
 
       const bytes = new Uint8Array(buffer);
@@ -1669,39 +2129,20 @@
 
       const blob = new Blob([decrypted], { type: 'audio/mpeg' });
       state.activeAudioBlobUrl = URL.createObjectURL(blob);
-
       hardwareAudio.src = state.activeAudioBlobUrl;
-      statusEl.textContent = 'AES-256 расшифровано в RAM';
-      
-      hardwareAudio.play().catch(() => {
-        statusEl.textContent = 'Нажмите ▶ для воспроизведения';
-      });
-
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: item.title,
-          artist: 'CyberVault',
-          album: 'Защищенное хранилище'
-        });
-        navigator.mediaSession.setActionHandler('play', togglePlayback);
-        navigator.mediaSession.setActionHandler('pause', togglePlayback);
-        navigator.mediaSession.setActionHandler('seekbackward', () => seekBy(-15));
-        navigator.mediaSession.setActionHandler('seekforward', () => seekBy(15));
-      }
+      statusEl.textContent = 'Расшифровано (AES-256)';
+      hardwareAudio.play().catch(() => {});
     } catch (err) {
       if (err.name === 'AbortError') return;
       toast(`Ошибка аудио: ${err.message}`, 'error');
-      statusEl.textContent = 'Сбой воспроизведения';
+      statusEl.textContent = 'Ошибка загрузки';
     }
   }
 
   function togglePlayback() {
     if (!hardwareAudio.src) return;
-    if (hardwareAudio.paused) {
-      hardwareAudio.play().catch(() => {});
-    } else {
-      hardwareAudio.pause();
-    }
+    if (hardwareAudio.paused) hardwareAudio.play().catch(() => {});
+    else hardwareAudio.pause();
   }
 
   function seekBy(seconds) {
@@ -1745,27 +2186,15 @@
     });
 
     hardwareAudio.addEventListener('ended', () => {
-      playSvg.classList.remove('hidden');
-      pauseSvg.classList.add('hidden');
       let nextIdx = state.activeAudioIndex + 1;
-      while (nextIdx < state.items.length && (state.items[nextIdx].type || 'audio') !== 'audio') {
-        nextIdx++;
-      }
-      if (nextIdx < state.items.length) {
-        playAudioItem(nextIdx);
-      }
+      while (nextIdx < state.items.length && (state.items[nextIdx].type || 'audio') !== 'audio') nextIdx++;
+      if (nextIdx < state.items.length) playAudioItem(nextIdx);
     });
   }
 
   function initScrubberEvents() {
     const scrubber = document.getElementById('dockScrubber');
     const curTime = document.getElementById('labelCurrentTime');
-    const resetScrub = () => {
-      if (state.isScrubbing && hardwareAudio.duration) {
-        hardwareAudio.currentTime = (scrubber.value / 100) * hardwareAudio.duration;
-      }
-      state.isScrubbing = false;
-    };
 
     scrubber.addEventListener('input', () => {
       state.isScrubbing = true;
@@ -1773,642 +2202,12 @@
         curTime.textContent = formatDuration((scrubber.value / 100) * hardwareAudio.duration);
       }
     });
-    scrubber.addEventListener('change', resetScrub);
-  }
-
-  async function openPdfItem(idx) {
-    const item = state.items[idx];
-    if (!item) return;
-
-    history.pushState({ modal: 'pdf' }, '');
-
-    const modal = document.getElementById('pdfViewerModal');
-    const title = document.getElementById('pdfViewerTitle');
-    const loaderBox = document.getElementById('pdfLoaderBox');
-    const loaderTitle = document.getElementById('pdfLoaderTitle');
-    const loaderStatus = document.getElementById('pdfLoaderStatus');
-    const progressFill = document.getElementById('pdfProgressFill');
-    const toolbar = document.getElementById('pdfToolbar');
-    const viewport = document.getElementById('pdfViewport');
-    const pagesFeed = document.getElementById('pdfPagesFeed');
-
-    modal.classList.remove('hidden');
-    toolbar.classList.add('hidden');
-    viewport.classList.add('hidden');
-    loaderBox.classList.remove('hidden');
-    pagesFeed.innerHTML = '';
-
-    title.textContent = item.title;
-    state.activePdfTitle = item.title;
-    loaderTitle.textContent = item.title;
-    loaderStatus.textContent = 'Инициализация данных...';
-    progressFill.style.width = '15%';
-
-    try {
-      let decryptedArrayBuffer = null;
-      const isUrl = item.filename && (item.filename.startsWith('http://') || item.filename.startsWith('https://'));
-      const isPlainPdf = isUrl && !item.filename.toLowerCase().includes('.enc');
-
-      if (isPlainPdf) {
-        loaderStatus.textContent = 'Загрузка внешнего PDF...';
-        progressFill.style.width = '50%';
-        const res = await fetch(item.filename, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        decryptedArrayBuffer = await res.arrayBuffer();
-      } else {
-        const buffer = await fetchEncryptedData(item, undefined, (cur, total) => {
-          const pct = Math.floor((cur / total) * 75);
-          progressFill.style.width = `${15 + pct}%`;
-          loaderStatus.textContent = total > 1 ? `Загрузка: часть ${cur} из ${total}...` : 'Загрузка документа...';
-        });
-
-        loaderStatus.textContent = 'Дешифрование AES-256 в RAM...';
-        progressFill.style.width = '92%';
-
-        const bytes = new Uint8Array(buffer);
-        const iv = bytes.subarray(0, 12);
-        const ciphertext = bytes.subarray(12);
-
-        decryptedArrayBuffer = await crypto.subtle.decrypt(
-          { name: "AES-GCM", iv: iv },
-          state.vaultKey,
-          ciphertext
-        );
+    scrubber.addEventListener('change', () => {
+      if (state.isScrubbing && hardwareAudio.duration) {
+        hardwareAudio.currentTime = (scrubber.value / 100) * hardwareAudio.duration;
       }
-
-      progressFill.style.width = '98%';
-      loaderStatus.textContent = 'Построение документа...';
-
-      if (state.activePdfBlobUrl && !state.activePdfBlobUrl.startsWith('http')) {
-        URL.revokeObjectURL(state.activePdfBlobUrl);
-      }
-      const blob = new Blob([decryptedArrayBuffer], { type: 'application/pdf' });
-      state.activePdfBlobUrl = URL.createObjectURL(blob);
-
-      if (window.pdfjsLib) {
-        const loadingTask = pdfjsLib.getDocument({ data: decryptedArrayBuffer });
-        state.currentPdfDoc = await loadingTask.promise;
-
-        loaderBox.classList.add('hidden');
-        toolbar.classList.remove('hidden');
-        viewport.classList.remove('hidden');
-
-        await buildContinuousPdfLayout();
-      } else {
-        loaderBox.classList.add('hidden');
-        toolbar.classList.remove('hidden');
-        viewport.classList.remove('hidden');
-        toast('PDF.js недоступен, файл готов к загрузке');
-      }
-    } catch (e) {
-      toast("Ошибка открытия PDF: " + e.message, 'error');
-      closePdfViewer(false);
-    }
-  }
-
-  async function buildContinuousPdfLayout() {
-    if (!state.currentPdfDoc) return;
-    const feed = document.getElementById('pdfPagesFeed');
-    feed.innerHTML = '';
-    state.pdfRenderTasks = {};
-
-    const numPages = state.currentPdfDoc.numPages;
-    document.getElementById('pdfPageLabel').textContent = `1 / ${numPages}`;
-
-    if (state.pdfObserver) {
-      state.pdfObserver.disconnect();
-    }
-
-    const firstPage = await state.currentPdfDoc.getPage(1);
-    const initialVp = firstPage.getViewport({ scale: 1 });
-    const defaultAspect = initialVp.width / initialVp.height;
-
-    for (let i = 1; i <= numPages; i++) {
-      const wrap = document.createElement('div');
-      wrap.className = 'pdf-page-wrapper';
-      wrap.id = `pdfPageWrap_${i}`;
-      wrap.dataset.pageNumber = String(i);
-      wrap.dataset.rendered = "false";
-
-      wrap.style.width = `${Math.min(window.innerWidth - 32, 850)}px`;
-      wrap.style.aspectRatio = `${defaultAspect}`;
-
-      const canvas = document.createElement('canvas');
-      wrap.appendChild(canvas);
-
-      const badge = document.createElement('div');
-      badge.className = 'pdf-page-badge';
-      badge.textContent = `${i} / ${numPages}`;
-      wrap.appendChild(badge);
-
-      feed.appendChild(wrap);
-    }
-
-    state.pdfObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const pageNum = parseInt(entry.target.dataset.pageNumber, 10);
-        if (entry.isIntersecting) {
-          renderPdfPageItem(pageNum, entry.target);
-        }
-      });
-    }, {
-      root: document.getElementById('pdfViewport'),
-      rootMargin: '400px 0px 400px 0px'
+      state.isScrubbing = false;
     });
-
-    document.querySelectorAll('.pdf-page-wrapper').forEach(el => {
-      state.pdfObserver.observe(el);
-    });
-  }
-
-  async function renderPdfPageItem(pageNum, wrapper) {
-    if (!state.currentPdfDoc) return;
-    if (wrapper.dataset.rendered === "true") return;
-
-    if (state.pdfRenderTasks[pageNum]) {
-      try {
-        state.pdfRenderTasks[pageNum].cancel();
-      } catch (_) {}
-      delete state.pdfRenderTasks[pageNum];
-    }
-
-    try {
-      const page = await state.currentPdfDoc.getPage(pageNum);
-      const viewportElem = document.getElementById('pdfViewport');
-      const containerWidth = Math.max(300, (viewportElem.clientWidth || window.innerWidth) - 36);
-      const baseWidth = Math.min(containerWidth, 850);
-
-      const unscaledViewport = page.getViewport({ scale: 1 });
-      const fitScale = baseWidth / unscaledViewport.width;
-      const viewport = page.getViewport({ scale: fitScale });
-
-      wrapper.style.width = `${Math.floor(viewport.width)}px`;
-      wrapper.style.height = `${Math.floor(viewport.height)}px`;
-      wrapper.style.aspectRatio = `${viewport.width} / ${viewport.height}`;
-
-      const canvas = wrapper.querySelector('canvas');
-      const ctx = canvas.getContext('2d');
-      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
-
-      canvas.width = Math.floor(viewport.width * dpr);
-      canvas.height = Math.floor(viewport.height * dpr);
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
-
-      const renderContext = {
-        canvasContext: ctx,
-        transform: dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null,
-        viewport: viewport
-      };
-
-      const renderTask = page.render(renderContext);
-      state.pdfRenderTasks[pageNum] = renderTask;
-
-      await renderTask.promise;
-      wrapper.dataset.rendered = "true";
-    } catch (err) {
-      if (err.name !== 'RenderingCancelledException') {
-        console.error(err);
-      }
-    } finally {
-      delete state.pdfRenderTasks[pageNum];
-    }
-  }
-
-  function onPdfViewportScroll() {
-    if (!state.currentPdfDoc) return;
-    const viewport = document.getElementById('pdfViewport');
-    const midY = viewport.scrollTop + viewport.clientHeight / 3;
-
-    const wraps = document.querySelectorAll('.pdf-page-wrapper');
-    for (let i = 0; i < wraps.length; i++) {
-      const el = wraps[i];
-      if (el.offsetTop <= midY && (el.offsetTop + el.offsetHeight) >= midY) {
-        document.getElementById('pdfPageLabel').textContent = `${el.dataset.pageNumber} / ${state.currentPdfDoc.numPages}`;
-        break;
-      }
-    }
-  }
-
-  function downloadCurrentPdf() {
-    if (!state.activePdfBlobUrl) return;
-    const a = document.createElement('a');
-    a.href = state.activePdfBlobUrl;
-    a.download = `${sanitizeFilename(state.activePdfTitle || 'document')}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    toast('Документ скачан');
-  }
-
-  function closePdfViewer(goHistoryBack = true) {
-    const modal = document.getElementById('pdfViewerModal');
-    modal.classList.add('hidden');
-
-    Object.keys(state.pdfRenderTasks).forEach(p => {
-      try { state.pdfRenderTasks[p].cancel(); } catch (_) {}
-    });
-    state.pdfRenderTasks = {};
-
-    if (state.pdfObserver) {
-      state.pdfObserver.disconnect();
-      state.pdfObserver = null;
-    }
-
-    if (state.currentPdfDoc) {
-      try { state.currentPdfDoc.destroy(); } catch (_) {}
-      state.currentPdfDoc = null;
-    }
-
-    if (state.activePdfBlobUrl && !state.activePdfBlobUrl.startsWith('http')) {
-      URL.revokeObjectURL(state.activePdfBlobUrl);
-    }
-    state.activePdfBlobUrl = null;
-    state.activePdfTitle = '';
-
-    document.getElementById('pdfPagesFeed').innerHTML = '';
-
-    if (goHistoryBack && history.state && history.state.modal === 'pdf') {
-      history.back();
-    }
-  }
-
-  function switchAdminTab(t) {
-    ['upload', 'manage', 'users', 'diag', 'sync'].forEach(name => {
-      document.getElementById(`tabContent${capitalize(name)}`).classList.toggle('hidden', name !== t);
-      const btn = document.getElementById(`tabBtn${capitalize(name)}`);
-      btn.classList.toggle('active', name !== t);
-      btn.setAttribute('aria-selected', name === t ? 'true' : 'false');
-    });
-    if (t === 'manage') renderManageCatalog();
-    if (t === 'users') renderUsersManage();
-  }
-
-  async function onUploadFileSubmit(e) {
-    e.preventDefault();
-    const type = document.getElementById('uploadTypeSelect').value;
-    const title = document.getElementById('uploadTitleInput').value.trim();
-    const file = document.getElementById('uploadFileInput').files[0];
-    const directUrl = document.getElementById('uploadUrlInput').value.trim();
-    const btn = document.getElementById('btnUploadSubmit');
-
-    if (!file && !directUrl) {
-      toast('Выберите файл или введите ссылку', 'error');
-      return;
-    }
-
-    try {
-      btn.disabled = true;
-
-      if (!file && directUrl) {
-        state.items.push({
-          id: `ext_${Date.now()}`,
-          filename: directUrl,
-          title: title || 'Внешний документ',
-          type: type,
-          size: 'Внешняя ссылка',
-          date: new Date().toLocaleDateString('ru-RU')
-        });
-
-        await saveCatalogState();
-
-        const token = document.getElementById('inputGhToken').value.trim();
-        const repo = document.getElementById('inputGhRepo').value.trim();
-        if (token && repo) {
-          await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), 'Update catalog manifest');
-          toast('Файл добавлен и синхронизирован с GitHub');
-        } else {
-          exportVaultDirectly();
-          toast('Файл добавлен. vault.json сохранен');
-        }
-
-        resetUploadForm();
-        return;
-      }
-
-      toast('Шифрование AES-256 в RAM...');
-
-      const fileBuffer = await file.arrayBuffer();
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const encrypted = await crypto.subtle.encrypt(
-        { name: "AES-GCM", iv: iv },
-        state.vaultKey,
-        fileBuffer
-      );
-
-      const combined = new Uint8Array(12 + encrypted.byteLength);
-      combined.set(iv, 0);
-      combined.set(new Uint8Array(encrypted), 12);
-
-      const cleanBaseName = sanitizeFilename(file.name.replace(/\.[^/.]+$/, ""));
-      const baseFilename = `${type}_${Date.now()}_${cleanBaseName}.enc`;
-
-      let chunkList = [];
-      let chunkData = [];
-
-      if (combined.byteLength <= CHUNK_SIZE) {
-        chunkList = [baseFilename];
-        chunkData = [{ filename: baseFilename, buffer: combined.buffer }];
-      } else {
-        const numChunks = Math.ceil(combined.byteLength / CHUNK_SIZE);
-        for (let i = 0; i < numChunks; i++) {
-          const start = i * CHUNK_SIZE;
-          const end = Math.min(start + CHUNK_SIZE, combined.byteLength);
-          const chunkBuf = combined.slice(start, end).buffer;
-          const chunkName = `${baseFilename}.part${i}`;
-          chunkList.push(chunkName);
-          chunkData.push({ filename: chunkName, buffer: chunkBuf });
-        }
-      }
-
-      const newItem = {
-        id: baseFilename,
-        filename: baseFilename,
-        chunks: chunkList.length > 1 ? chunkList : undefined,
-        title: title || prettifyFilename(file.name),
-        type: type,
-        size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
-        date: new Date().toLocaleDateString('ru-RU')
-      };
-      state.items.push(newItem);
-
-      // Сразу кэшируем на текущем устройстве
-      await setCachedFile(newItem.id, combined.buffer);
-
-      await saveCatalogState();
-
-      const token = document.getElementById('inputGhToken').value.trim();
-      const repo = document.getElementById('inputGhRepo').value.trim();
-      if (token && repo) {
-        for (let i = 0; i < chunkData.length; i++) {
-          toast(`GitHub: отправка ${i + 1} из ${chunkData.length}...`);
-          await githubUploadOrUpdate(repo, `tracks/${chunkData[i].filename}`, chunkData[i].buffer, `Add part ${i + 1}/${chunkData.length}: ${title}`);
-        }
-        await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), 'Update catalog manifest');
-        toast('Файл зашифрован и опубликован на GitHub');
-      } else {
-        for (let i = 0; i < chunkData.length; i++) {
-          downloadDirectBlob(new Blob([chunkData[i].buffer]), chunkData[i].filename);
-          if (chunkData.length > 1) await new Promise(r => setTimeout(r, 350));
-        }
-        exportVaultDirectly();
-        toast('Файлы зашифрованы и сохранены');
-      }
-
-      resetUploadForm();
-    } catch (err) {
-      toast('Ошибка: ' + err.message, 'error');
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  function resetUploadForm() {
-    document.getElementById('uploadTitleInput').value = '';
-    document.getElementById('uploadTitleInput').dataset.autofilled = 'false';
-    document.getElementById('uploadFileInput').value = '';
-    document.getElementById('uploadUrlInput').value = '';
-    document.getElementById('dropFilename').style.display = 'none';
-    document.getElementById('dropLabel').style.display = 'block';
-  }
-
-  function renderManageCatalog() {
-    const box = document.getElementById('catalogManageList');
-    box.innerHTML = '';
-
-    if (state.items.length === 0) {
-      box.innerHTML = '<div style="color: var(--text-sub); text-align: center; padding: 2.5rem;">Каталог пуст.</div>';
-      return;
-    }
-
-    state.items.forEach((item, index) => {
-      const div = document.createElement('div');
-      div.className = 'catalog-manage-item';
-      const partsInfo = (item.chunks && item.chunks.length > 1) ? ` (${item.chunks.length} частей)` : '';
-      div.innerHTML = `
-        <div style="flex: 1; min-width: 0;">
-          <div style="font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(item.title)}</div>
-          <div style="font-size: 0.76rem; color: var(--text-sub); margin-top: 0.2rem;">${item.type === 'pdf' ? 'PDF Документ' : 'Аудио'} • ${escapeHtml(item.size || '')}${partsInfo}</div>
-        </div>
-        <button class="ios-chip" style="color: var(--danger); border-color: rgba(255, 69, 58, 0.4);" data-action="delete" data-index="${index}">Удалить</button>
-      `;
-      box.appendChild(div);
-    });
-
-    box.querySelectorAll('button[data-action="delete"]').forEach(btn => {
-      btn.addEventListener('click', () => deleteItemFromCatalog(Number(btn.dataset.index)));
-    });
-  }
-
-  async function deleteItemFromCatalog(index) {
-    const item = state.items[index];
-    if (!item) return;
-
-    if (!confirm(`Удалить «${item.title}» из каталога?`)) return;
-
-    try {
-      if (state.activeAudioIndex === index) {
-        hardResetAudioEngine();
-        document.getElementById('customDock').classList.add('hidden');
-        state.activeAudioIndex = -1;
-      }
-
-      await removeCachedFile(item.id || item.filename);
-
-      state.items.splice(index, 1);
-      await saveCatalogState();
-
-      renderManageCatalog();
-      renderLibrary();
-
-      const token = document.getElementById('inputGhToken').value.trim();
-      const repo = document.getElementById('inputGhRepo').value.trim();
-      if (token && repo) {
-        if (Array.isArray(item.chunks) && item.chunks.length > 0) {
-          for (const chunkName of item.chunks) {
-            await githubDeleteFile(repo, `tracks/${chunkName}`);
-          }
-        } else if (!item.filename.startsWith('http://') && !item.filename.startsWith('https://')) {
-          await githubDeleteFile(repo, `tracks/${item.filename}`);
-        }
-        await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), `Delete: ${item.title}`);
-        toast(`Запись «${item.title}» удалена`);
-      } else {
-        exportVaultDirectly();
-        toast(`Запись «${item.title}» удалена локально`);
-      }
-    } catch (err) {
-      toast('Ошибка удаления: ' + err.message, 'error');
-    }
-  }
-
-  async function saveCatalogState() {
-    const catIv = crypto.getRandomValues(new Uint8Array(12));
-    const encCatalog = await crypto.subtle.encrypt(
-      { name: "AES-GCM", iv: catIv },
-      state.vaultKey,
-      new TextEncoder().encode(JSON.stringify(state.items))
-    );
-    state.vaultData.catalog = { iv: bufToBase64(catIv), data: bufToBase64(encCatalog) };
-  }
-
-  async function onAddUserSubmit(e) {
-    e.preventDefault();
-    const user = document.getElementById('inputNewUser').value.trim();
-    const pass = document.getElementById('inputNewPass').value.trim();
-
-    try {
-      const uHash = await sha256(user);
-      const salt = crypto.getRandomValues(new Uint8Array(16));
-      const userKey = await deriveUserKey(pass, salt, DEFAULT_ITERATIONS);
-
-      const rawVaultKey = await crypto.subtle.exportKey("raw", state.vaultKey);
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const encKey = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, userKey, rawVaultKey);
-
-      state.vaultData.users[uHash] = {
-        role: "user",
-        salt: bufToBase64(salt),
-        iv: bufToBase64(iv),
-        encKey: bufToBase64(encKey),
-        iterations: DEFAULT_ITERATIONS
-      };
-
-      renderUsersManage();
-
-      const token = document.getElementById('inputGhToken').value.trim();
-      const repo = document.getElementById('inputGhRepo').value.trim();
-      if (token && repo) {
-        await githubUploadOrUpdate(repo, 'vault.json', new TextEncoder().encode(JSON.stringify(state.vaultData, null, 2)), `Add user: ${user}`);
-        toast(`Пользователь ${user} добавлен и синхронизирован`);
-      } else {
-        exportVaultDirectly();
-        toast(`Пользователь ${user} создан`);
-      }
-
-      document.getElementById('inputNewUser').value = '';
-      document.getElementById('inputNewPass').value = '';
-    } catch (e) {
-      toast('Ошибка: ' + e.message, 'error');
-    }
-  }
-
-  function renderUsersManage() {
-    const box = document.getElementById('usersListRows');
-    box.innerHTML = '';
-    Object.keys(state.vaultData.users).forEach(hash => {
-      const u = state.vaultData.users[hash];
-      const div = document.createElement('div');
-      div.style.cssText = 'background: rgba(12, 14, 21, 0.75); padding: 0.9rem 1.1rem; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.86rem; margin-bottom: 0.6rem; border: 1px solid var(--border);';
-      div.innerHTML = `
-        <div>
-          <span style="font-family: monospace;">${escapeHtml(hash.substring(0, 10))}...</span>
-          <span style="color: var(--accent); margin-left: 0.6rem; font-weight: 600;">[${escapeHtml(u.role)}]</span>
-        </div>
-        ${u.role !== 'admin' ? `<button class="ios-chip" style="color: var(--danger); border-color: rgba(255, 69, 58, 0.4);" data-userhash="${escapeHtml(hash)}">Удалить</button>` : '<span style="font-size: 0.78rem; color: var(--text-sub);">Администратор</span>'}
-      `;
-      box.appendChild(div);
-    });
-
-    box.querySelectorAll('button[data-userhash]').forEach(btn => {
-      btn.addEventListener('click', () => revokeUserAccess(btn.dataset.userhash));
-    });
-  }
-
-  function revokeUserAccess(hash) {
-    if (confirm('Отозвать доступ для этого пользователя?')) {
-      delete state.vaultData.users[hash];
-      renderUsersManage();
-      exportVaultDirectly();
-      toast('Пользователь удален. Сохраните vault.json');
-    }
-  }
-
-  async function runDiagScan() {
-    const out = document.getElementById('diagLogsOutput');
-    out.textContent = '';
-    const addLog = (text) => {
-      const line = document.createElement('div');
-      line.textContent = text;
-      out.appendChild(line);
-    };
-
-    addLog('Проверка доступности объектов...');
-    const base = getBaseRepoUrl();
-
-    try {
-      const v = await fetch(new URL('vault.json', base).href + `?_cb=${Date.now()}`, { cache: 'no-store' });
-      addLog(`vault.json: ${v.ok ? '✅ Доступен (200 OK)' : '❌ Ошибка ' + v.status}`);
-    } catch (_) {
-      addLog('vault.json: ❌ Недоступен');
-    }
-
-    for (const it of state.items) {
-      if (it.filename && (it.filename.startsWith('http://') || it.filename.startsWith('https://'))) {
-        addLog(`${it.title}: 🌐 Внешняя прямая ссылка`);
-        continue;
-      }
-      try {
-        await fetchEncryptedData(it);
-        const chunkInfo = (it.chunks && it.chunks.length > 1) ? ` (${it.chunks.length} частей)` : '';
-        addLog(`${it.title}${chunkInfo}: ✅ Файл доступен (в кэше или сети)`);
-      } catch (e) {
-        addLog(`${it.title}: ❌ Ошибка: ${e.message}`);
-      }
-    }
-  }
-
-  async function githubUploadOrUpdate(repo, path, contentBuffer, message) {
-    const token = document.getElementById('inputGhToken').value.trim();
-    const branch = document.getElementById('inputGhBranch').value.trim() || 'main';
-    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
-
-    let sha = null;
-    try {
-      const g = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers: { 'Authorization': `Bearer ${token}` } });
-      if (g.ok) {
-        const j = await g.json();
-        sha = j.sha;
-      }
-    } catch (_) {}
-
-    const p = await fetch(url, {
-      method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message,
-        content: bufToBase64(contentBuffer),
-        branch,
-        ...(sha ? { sha } : {})
-      })
-    });
-
-    if (!p.ok) {
-      const err = await p.json();
-      throw new Error(err.message || 'Ошибка GitHub API');
-    }
-  }
-
-  async function githubDeleteFile(repo, path) {
-    const token = document.getElementById('inputGhToken').value.trim();
-    const branch = document.getElementById('inputGhBranch').value.trim() || 'main';
-    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
-
-    try {
-      const g = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers: { 'Authorization': `Bearer ${token}` } });
-      if (!g.ok) return;
-      const j = await g.json();
-
-      await fetch(url, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: `Delete ${path}`,
-          sha: j.sha,
-          branch
-        })
-      });
-    } catch (_) {}
   }
 
   async function onInitSubmit(e) {
@@ -2450,7 +2249,7 @@
       };
 
       exportVaultDirectly();
-      toast('vault.json успешно сгенерирован');
+      toast('vault.json успешно сгенерирован и скачан');
     } catch (err) {
       toast('Ошибка: ' + err.message, 'error');
     }
